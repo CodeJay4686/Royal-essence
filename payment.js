@@ -38,17 +38,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ✅ Start Flutterwave payment
-    payWithFlutterwave(amount, name);
+    payWithFlutterwave(amount, name, phone, location);
   });
 });
 
 /* ================= FLUTTERWAVE ================= */
 
-function payWithFlutterwave(amount, customerName) {
+function payWithFlutterwave(amount, name, phone, location) {
   const BASE_URL = window.location.origin;
 
+  // ✅ AUTO-GENERATED EMAIL (user never sees it)
+  const fakeEmail = `customer_${Date.now()}@royalessence.store`;
+
   FlutterwaveCheckout({
-    public_key: window.FLW_PUBLIC_KEY, // injected from HTML
+    public_key: window.FLW_PUBLIC_KEY,
     tx_ref: "RE-" + Date.now(),
     amount: amount,
     currency: "NGN",
@@ -57,12 +60,14 @@ function payWithFlutterwave(amount, customerName) {
     redirect_url: `${BASE_URL}/payment/verify`,
 
     customer: {
-      name: customerName,
+      email: fakeEmail,     // ✅ REQUIRED
+      name: name,
+      phone_number: phone,
     },
 
     customizations: {
       title: "Royal Essence",
-      description: "Luxury fragrance purchase",
+      description: `Order by ${name} | ${phone} | ${location}`,
     },
   });
 }
