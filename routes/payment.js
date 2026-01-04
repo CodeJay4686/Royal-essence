@@ -24,7 +24,7 @@ function formatItemsForSheet(items) {
 const { JWT } = require("google-auth-library");
 
 async function saveOrderToGoogleSheet(order) {
-  const creds = require("../google-credentials.json");
+  const creds = JSON.parse(process.env.GOOGLE_CREDS);
 
   const serviceAccountAuth = new JWT({
     email: creds.client_email,
@@ -137,3 +137,4 @@ router.post("/save-customer", (req, res) => {
 });
 
 module.exports = router;
+
