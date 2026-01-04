@@ -5,47 +5,64 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!payBtn || !modal || !form) return;
 
+  // Open modal
   payBtn.addEventListener("click", (e) => {
     e.preventDefault();
     modal.style.display = "flex";
   });
 
-  form.addEventListener("submit", (e) => {
+  // Submit customer details & start payment
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("cust-name").value;
-    const phone = document.getElementById("cust-phone").value;
-    const location = document.getElementById("cust-location").value;
+    const name = document.getElementById("cust-name").value.trim();
+    const phone = document.getElementById("cust-phone").value.trim();
+    const location = document.getElementById("cust-location").value.trim();
 
     const amount = Number(
-      document.getElementById("cart-total").innerText.replace(/[₦,]/g, "")
+      document
+        .getElementById("cart-total")
+        .innerText.replace(/[₦,]/g, "")
     );
 
-    // save customer details in session
-fetch("/payment/save-customer", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    name,
-    phone,
-    location
-  })
-});
+    if (!name || !phone || !location || !amount) {
+      alert("Please complete all fields");
+      return;
+    }
 
-    FlutterwaveCheckout({
-      public_key: "FLWPUBK-55b9e90add3aea479bb56b23d5499031-X",
-      tx_ref: "RE-" + Date.now(),
-      amount,
-      currency: "NGN",
-      redirect_url: "http://localhost:3000/payment/verify",
-      customer: {
-        email: "order@royalessence.com",
-        name
-      },
-      customizations: {
-        title: "Royal Essence",
-        description: `Name: ${name}, WhatsApp: ${phone}, Location: ${location}`
-      }
+    // ✅ Save customer details in session
+    await fetch("/payment/save-customer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone, location }),
     });
+
+    // ✅ Start Flutterwave payment
+    payWithFlutterwave(amount, name);
   });
 });
+
+/* ================= FLUTTERWAVE ================= */
+
+function payWithFlutterwave(amount, customerName) {
+  const BASE_URL = window.location.origin;
+
+  FlutterwaveCheckout({
+    public_key: window.FLW_PUBLIC_KEY, // injected from HTML
+    tx_ref: "RE-" + Date.now(),
+    amount: amount,
+    currency: "NGN",
+    payment_options: "card, banktransfer, ussd",
+
+    redirect_url: `${BASE_URL}/payment/verify`,
+
+    customer: {
+      name: customerName,
+    },
+
+    customizations: {
+      title: "Royal Essence",
+      description: "Luxury fragrance purchase",
+    },
+  });
+}
