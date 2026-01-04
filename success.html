@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Successful | Royal Essence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="cart.css">
+</head>
+<body>
+
+  <main class="success-container">
+
+    <h1>Thank You ✨</h1>
+    <p class="success-text">
+      Your payment was successful. We are preparing your order.
+    </p>
+
+    <div id="order-summary" class="order-summary"></div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="success-actions">
+      <a href="index.html" class="pay-btn">
+        Continue Shopping
+      </a>
+
+      <a href="cart.html" class="secondary-btn">
+        View Cart
+      </a>
+    </div>
+
+  </main>
+
+  <!-- ORDER SUMMARY -->
+  <script>
+    fetch("/cart")
+      .then(res => res.json())
+      .then(cart => {
+        const div = document.getElementById("order-summary");
+        let html = "<h3>Order Summary</h3>";
+        let total = 0;
+
+        Object.values(cart).forEach(item => {
+          total += item.price;
+          html += `<p>${item.name} – ₦${item.price.toLocaleString()}</p>`;
+        });
+
+        html += `<strong>Total: ₦${total.toLocaleString()}</strong>`;
+        div.innerHTML = html;
+      });
+  </script>
+
+  <!-- CLEAR CART -->
+  <script>
+    fetch("/cart/clear", { method: "POST" });
+  </script>
+
+</body>
+</html>

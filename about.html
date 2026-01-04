@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Royal Essence</title>
+
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1c1c1c;
+      color: #f5f5f5;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ===== FIXED NAVBAR ===== */
+    header.navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 16px 22px;
+      background: linear-gradient(180deg, #111, #1a1a1a);
+      border-bottom: 1px solid rgba(212,175,55,0.25);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #d4af37;
+      white-space: nowrap;
+    }
+
+    nav {
+      display: flex;
+      gap: 22px;
+    }
+
+    nav a {
+      font-size: 13px;
+      color: #ddd;
+      opacity: 0.85;
+    }
+
+    nav a:hover {
+      opacity: 1;
+    }
+
+    .cart {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #d4af37, #b8962e);
+      color: #1c1c1c;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ===== HAMBURGER ===== */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      width: 22px;
+      height: 2px;
+      background: #d4af37;
+      border-radius: 2px;
+    }
+
+    /* ===== PAGE CONTENT ===== */
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 2rem 4rem; /* top padding fixes fixed navbar */
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    /* ===== HERO ===== */
+    .about-hero {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .about-hero h1 {
+      font-size: 3rem;
+      color: #d4af37;
+    }
+
+    .about-hero p {
+      font-size: 1.15rem;
+      max-width: 700px;
+      margin: 0 auto;
+      color: #ddd;
+    }
+
+    /* ===== VALUES ===== */
+    .values {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+
+    .value-card {
+      background: #2a2a2a;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+      transition: transform 0.3s;
+    }
+
+    .value-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .value-card i {
+      font-size: 2rem;
+      color: #d4af37;
+      margin-bottom: 1rem;
+    }
+
+    .value-card h3 {
+      font-size: 1.2rem;
+      color: #d4af37;
+    }
+
+    .value-card p {
+      font-size: 0.95rem;
+      color: #ddd;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      margin-top: 6rem;
+      padding-top: 2rem;
+      border-top: 1px solid #333;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 900px) {
+      .hamburger {
+        display: flex;
+      }
+
+      nav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #111;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 0;
+        display: none;
+      }
+
+      nav.active {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .about-hero h1 {
+        font-size: 2.3rem;
+      }
+
+      .about-hero p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="logo">Royal Essence</div>
+
+    <nav id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="collection.html">Collection</a>
+      <a href="about.html">About</a>
+    </nav>
+
+    <a href="cart.html" class="cart">
+      <i class="fas fa-shopping-cart"></i> Cart
+    </a>
+  </header>
+
+  <!-- PAGE -->
+  <div class="page">
+
+    <section class="about-hero">
+      <h1>About Royal Essence</h1>
+      <p>
+        We curate luxury fragrances, sell limited quantities,
+        guarantee authenticity, and value discretion & quality.
+        Short. Confident. Premium.
+      </p>
+    </section>
+
+    <section class="values">
+      <div class="value-card">
+        <i class="fas fa-gem"></i>
+        <h3>Luxury Curation</h3>
+        <p>We handpick only the finest, exclusive fragrances.</p>
+      </div>
+
+      <div class="value-card">
+        <i class="fas fa-box-open"></i>
+        <h3>Limited Quantities</h3>
+        <p>Rare selections that maintain exclusivity.</p>
+      </div>
+
+      <div class="value-card">
+        <i class="fas fa-certificate"></i>
+        <h3>Authenticity Guaranteed</h3>
+        <p>100% genuine, sourced from trusted suppliers.</p>
+      </div>
+
+      <div class="value-card">
+        <i class="fas fa-user-secret"></i>
+        <h3>Discretion & Quality</h3>
+        <p>Privacy-first luxury experience.</p>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 Royal Essence. All rights reserved.
+    </footer>
+
+  </div>
+
+  <!-- JS -->
+  <script>
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("navLinks");
+
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("active");
+    });
+  </script>
+
+</body>
+</html>

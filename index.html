@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Royal Essence</title>
+
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+  <div class="page">
+
+    <header class="navbar">
+
+  <!-- HAMBURGER -->
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- LOGO -->
+  <div class="logo">
+    Royal<br><span>Essence</span>
+  </div>
+
+  <!-- NAV LINKS -->
+  <nav id="navLinks" class="nav-links">
+    <a href="#">Home</a>
+    <a href="products.html">Collection</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <!-- CART -->
+  <button class="cart" onclick="window.location.href='cart.html'">
+    <i class="fas fa-shopping-cart"></i>
+    <span>Cart</span>
+  </button>
+
+</header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+
+      <div class="hero-text left">
+        <h1>Discover Your</h1>
+        <p>
+          Discover the perfect<br>
+          fragrance for you with our<br>
+          wide selection of perfumes.
+        </p>
+      </div>
+
+      <div class="hero-center">
+        <img src="images/perfume_homepage.png" class="perfume" alt="Perfume">
+      </div>
+
+      <div class="hero-text right">
+        <h1>Perfect</h1>
+        <p class="subtitle">
+          A truly timeless Eau De Parfum<br>
+          became one of the most beloved.
+        </p>
+      </div>
+
+      <img src="images/image-removebg-preview.png" class="butterfly left-butterfly">
+      <img src="images/big_butterfly.png" class="butterfly right-butterfly">
+    </section>
+
+    <!-- BEST SELLING SECTION -->
+    <section class="bottom">
+
+      <div class="best-selling">
+        <h3>Best<br>Selling<br>Products</h3>
+      </div>
+
+      <div class="products">
+        <div class="product">
+          <img src="images/asad.png" alt="Chanel NO 5">
+          <p>Chanel NO 5</p>
+          <span>$15.00 (500ml)</span>
+        </div>
+
+        <div class="product">
+          <img src="images/Asad2.png" alt="Miss Dior Eau Di">
+          <p>Miss Dior Eau Di</p>
+          <span>$18.00 (250ml)</span>
+        </div>
+
+        <div class="product">
+          <img src="images/jean_lowe.png" alt="Coco Mademoi">
+          <p>Coco Mademoi</p>
+          <span>$15.00 (500ml)</span>
+        </div>
+      </div>
+
+      <div class="promo">
+        <h2>25% Off</h2>
+        <p>Our all-new arrivals</p>
+        <a href="#">Explore App →</a>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- FOOTER (UNCHANGED) -->
+  <footer class="footer">
+    <div class="footer-container">
+
+      <div class="footer-brand">
+        <h2>Royal Essence</h2>
+        <p>
+          Luxury fragrances curated for<br>
+          elegance, confidence, and class.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <a href="#">Home</a>
+        <a href="products.html">Collection</a>
+        <a href="about.html">About</a>
+        <a href="cart.html">Cart</a>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fas fa-phone"></i> +234 XXX XXX XXXX</p>
+        <p><i class="fas fa-envelope"></i> royalessence@gmail.com</p>
+        <p><i class="fas fa-location-dot"></i> Nigeria</p>
+      </div>
+
+      <div class="footer-social">
+        <h4>Follow Us</h4>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+          <a href="#"><i class="fab fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <span id="year"></span> Royal Essence. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+
+  <!-- ✅ HAMBURGER SCRIPT (UNCHANGED LOGIC, NOW WORKS) -->
+  <script>
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("navLinks");
+
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("active");
+    });
+  </script>
+
+</body>
+</html>

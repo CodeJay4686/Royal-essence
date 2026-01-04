@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Royal Essence | Cart</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Cart Styles -->
+  <link rel="stylesheet" href="cart.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+<!-- ===== FIXED NAVBAR ===== -->
+<header class="navbar">
+
+  <!-- HAMBURGER -->
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="logo">Royal Essence</div>
+
+  <nav id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="products.html">Collection</a>
+    <a href="about.html">About</a>
+  </nav>
+
+  <a href="cart.html" class="cart">
+    <i class="fas fa-shopping-cart"></i> Cart
+  </a>
+</header>
+
+<!-- ===== CART TITLE ===== -->
+<section class="cart-header">
+  <h1>Your Cart</h1>
+  <p>Review your selected fragrances</p>
+</section>
+
+<!-- ===== CART CONTENT ===== -->
+<main class="cart-container">
+
+  <div id="cart-items"></div>
+
+  <aside class="cart-summary">
+    <div class="summary-row">
+      <span>Total</span>
+      <strong id="cart-total">₦0</strong>
+    </div>
+
+    <a id="checkout" href="#" class="pay-btn">
+      Pay / Order
+    </a>
+  </aside>
+
+</main>
+
+<!-- ===== CUSTOMER DETAILS MODAL ===== -->
+<div id="customer-modal" class="modal">
+  <div class="modal-content">
+    <h2>Delivery Details</h2>
+    <p>Please provide your details to continue</p>
+
+    <form id="customer-form">
+      <input type="text" id="cust-name" placeholder="Full Name" required>
+      <input type="tel" id="cust-phone" placeholder="WhatsApp Number" required>
+      <input type="text" id="cust-location" placeholder="Delivery Location" required>
+
+      <button type="submit" class="pay-btn">
+        Proceed to Payment
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="cart.js"></script>
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script src="payment.js"></script>
+
+<script>
+  loadCart();
+
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("navLinks");
+
+  hamburger.addEventListener("click", () => {
+    navLinks.classList.toggle("active");
+  });
+</script>
+
+</body>
+</html>
