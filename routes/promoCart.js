@@ -7,7 +7,11 @@ const promoCarts = {};
 
 // Helper to identify user
 function getClientKey(req) {
-  return req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) {
+    return forwarded.split(',')[0].trim(); // ✅ FIX
+  }
+  return req.socket.remoteAddress;
 }
 
 // ADD TO PROMO CART
@@ -49,3 +53,4 @@ router.get('/', (req, res) => {
 });
 
 module.exports = router;
+
