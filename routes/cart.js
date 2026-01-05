@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-/* ✅ correct import */
-const products = require('../data/products.js');
+/* ✅ correct path based on your real structure */
+const products = require('../products.js');
 
 function getCart(req) {
   if (!req.session.cart) req.session.cart = {};
