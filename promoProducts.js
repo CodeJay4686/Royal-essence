@@ -2,7 +2,7 @@ module.exports = [
   {
     id: 1,
     name: "Lattafa Asad (EDP)",
-    price: 100,
+    price: 39999,
     image: "/images/asad.png"
   },
   {
@@ -18,5 +18,6 @@ module.exports = [
     image: "/images/jean_lowe.png"
   }
 ];
+
 
 
