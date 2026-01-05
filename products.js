@@ -2,13 +2,13 @@ module.exports = [
   {
     id: 1,
     name: "Lattafa Asad (EDP)",
-    price: 38999,
+    price: 44999,
     image: "/images/asad.png"
   },
   {
     id: 2,
     name: "Lattafa Khamrah",
-    price: 47999,
+    price: 54999,
     image: "/images/Asad2.png"
   },
   {
@@ -20,7 +20,7 @@ module.exports = [
   {
     id: 4,
     name: "Armaf Club de Nuit Intense Man",
-    price: 58999,
+    price: 67999,
     image: "/images/Armaf-club-de-nuit-intense-man-eau-de-toilette-for-men.jpg"
   },
   {
@@ -44,7 +44,7 @@ module.exports = [
   {
     id: 8,
     name: "Afnan Supremacy Collector's Edition",
-    price: 99999,
+    price: 100999,
     image: "/images/supremacy.png"
   },
   {
@@ -68,9 +68,10 @@ module.exports = [
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
-    price: 50999,
+    price: 62999,
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
