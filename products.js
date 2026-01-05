@@ -2,25 +2,25 @@ module.exports = [
   {
     id: 1,
     name: "Lattafa Asad (EDP)",
-    price: 100,
+    price: 44999,
     image: "/images/asad.png"
   },
   {
     id: 2,
     name: "Lattafa Khamrah",
-    price: 45000,
+    price: 44999,
     image: "/images/Asad2.png"
   },
   {
     id: 3,
     name: "Jean Lowe Immortel",
-    price: 48000,
+    price: 47999,
     image: "/images/jean_lowe.png"
   },
   {
     id: 4,
     name: "Armaf Club de Nuit Intense Man",
-    price: 42000,
+    price: 41999,
     image: "/images/Armaf-club-de-nuit-intense-man-eau-de-toilette-for-men.jpg"
   },
   {
@@ -72,3 +72,4 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
