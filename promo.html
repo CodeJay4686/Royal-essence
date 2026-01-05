@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Royal Essence | New User Promo</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500&display=swap');
@@ -25,6 +27,7 @@
 
     a { text-decoration: none; color: inherit; }
 
+    /* ===== NAVBAR ===== */
     header.navbar {
       position: fixed;
       top: 0;
@@ -66,6 +69,7 @@
       white-space: nowrap;
     }
 
+    /* ===== HAMBURGER ===== */
     .hamburger {
       display: none;
       flex-direction: column;
@@ -99,6 +103,7 @@
       nav.active { display: flex; }
     }
 
+    /* ===== PAGE CONTENT ===== */
     h2 {
       text-align: center;
       color: #d4af37;
@@ -173,11 +178,14 @@
     }
   </style>
 </head>
+
 <body>
 
 <header class="navbar">
   <div class="hamburger" id="hamburger">
-    <span></span><span></span><span></span>
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
 
   <div class="logo">Royal Essence</div>
@@ -188,20 +196,22 @@
     <a href="about.html">About</a>
   </nav>
 
-  <!-- ✅ PROMO CART LINK -->
+  <!-- PROMO CART LINK -->
   <a href="promo-cart.html" class="cart">
     <i class="fas fa-shopping-cart"></i> Promo Cart
   </a>
 </header>
 
 <h2>🎉 New User Promo</h2>
-<p class="promo-note">Exclusive discounted prices for first-time customers only</p>
+<p class="promo-note">
+  Exclusive discounted prices for first-time customers only
+</p>
 
 <div class="collection-grid">
 
   <div class="perfume-card">
     <span class="badge">NEW USER DEAL</span>
-    <img src="images/asad.png">
+    <img src="images/asad.png" alt="Lattafa Asad">
     <h3>Lattafa Asad (EDP)</h3>
     <p class="old-price">₦44,999</p>
     <p class="price">₦39,999</p>
@@ -210,7 +220,7 @@
 
   <div class="perfume-card">
     <span class="badge">NEW USER DEAL</span>
-    <img src="images/Asad2.png">
+    <img src="images/Asad2.png" alt="Lattafa Khamrah">
     <h3>Lattafa Khamrah</h3>
     <p class="old-price">₦44,999</p>
     <p class="price">₦38,999</p>
@@ -219,7 +229,7 @@
 
   <div class="perfume-card">
     <span class="badge">NEW USER DEAL</span>
-    <img src="images/jean_lowe.png">
+    <img src="images/jean_lowe.png" alt="Jean Lowe Immortel">
     <h3>Jean Lowe Immortel</h3>
     <p class="old-price">₦47,999</p>
     <p class="price">₦41,999</p>
@@ -228,7 +238,7 @@
 
 </div>
 
-<!-- ✅ PROMO CART SCRIPT -->
+<!-- PROMO CART SCRIPT -->
 <script src="promo-cart.js"></script>
 
 <script>
