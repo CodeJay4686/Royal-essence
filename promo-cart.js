@@ -1,8 +1,14 @@
 function addToPromoCart(id) {
   fetch(`/promo-cart/add/${id}`, { method: 'POST' })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error('Request failed');
+      return res.json();
+    })
     .then(() => alert('Added to promo cart'))
-    .catch(() => alert('Failed to add'));
+    .catch(err => {
+      console.error(err);
+      alert('Failed to add to cart');
+    });
 }
 
 function removeFromPromoCart(id) {
@@ -18,6 +24,8 @@ function loadPromoCart() {
       const totalEl = document.getElementById('cart-total');
       const checkoutBtn = document.getElementById('checkout');
 
+      if (!container || !totalEl || !checkoutBtn) return;
+
       container.innerHTML = '';
       let total = 0;
       let message = 'Hello, I would like to order (New User Promo):%0A';
@@ -28,10 +36,13 @@ function loadPromoCart() {
         container.innerHTML += `
           <div class="cart-item">
             <img src="${item.image}">
-            <div>
+            <div class="cart-info">
               <h3>${item.name}</h3>
               <p>₦${item.price.toLocaleString()} × ${item.quantity}</p>
-              <button onclick="removeFromPromoCart(${item.id})">Remove</button>
+              <button class="remove-btn"
+                onclick="removeFromPromoCart(${item.id})">
+                Remove
+              </button>
             </div>
           </div>
         `;
