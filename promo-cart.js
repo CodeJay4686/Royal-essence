@@ -1,13 +1,23 @@
 function addToPromoCart(id) {
-  fetch(`/promo-cart/add/${id}`, { method: 'POST' })
+  fetch(`/promo-cart/add/${id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
     .then(res => {
-      if (!res.ok) throw new Error('Request failed');
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
       return res.json();
     })
-    .then(() => alert('Added to promo cart'))
+    .then(data => {
+      console.log('Promo cart:', data);
+      alert('Added to promo cart');
+    })
     .catch(err => {
-      console.error(err);
-      alert('Failed to add to cart');
+      console.error('Add promo cart error:', err);
+      alert('Failed to add to promo cart');
     });
 }
 
@@ -52,5 +62,6 @@ function loadPromoCart() {
 
       totalEl.textContent = `₦${total.toLocaleString()}`;
       checkoutBtn.href = `https://wa.me/2349129232610?text=${message}`;
-    });
+    })
+    .catch(err => console.error('Load promo cart error:', err));
 }
