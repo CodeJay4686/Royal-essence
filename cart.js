@@ -1,8 +1,14 @@
 function addToCart(id) {
   fetch(`/cart/add/${id}`, { method: 'POST' })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error('Failed to add');
+      return res.json();
+    })
     .then(() => alert('Added to cart'))
-    .catch(err => console.error(err));
+    .catch(err => {
+      console.error(err);
+      alert('Product not added');
+    });
 }
 
 function removeFromCart(id) {
@@ -26,7 +32,7 @@ function loadCart() {
       let message = 'Hello, I would like to order:%0A';
 
       Object.values(cart).forEach(item => {
-        total += item.price;
+        total += item.price * (item.quantity || 1);
 
         cartContainer.innerHTML += `
           <div class="cart-item">
