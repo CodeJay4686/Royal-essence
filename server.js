@@ -5,6 +5,7 @@ const fs = require("fs");
 
 const cartRoutes = require("./routes/cart");
 const paymentRoutes = require("./routes/payment");
+const promoCartRoutes = require("./routes/promoCart"); // ✅ ADD THIS
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use(
   })
 );
 
-// static files (html, css, js, images)
+// static files
 app.use(express.static(__dirname));
 
 // home page
@@ -29,13 +30,16 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// cart routes
+// normal cart
 app.use("/cart", cartRoutes);
 
-// payment routes
+// ✅ PROMO CART (THIS FIXES YOUR ERROR)
+app.use("/promo-cart", promoCartRoutes);
+
+// payment
 app.use("/payment", paymentRoutes);
 
-// ✅ ORDERS API (FOR RETOOL)
+// orders api
 app.get("/api/orders", (req, res) => {
   const ordersPath = path.join(__dirname, "data/orders.json");
 
@@ -48,7 +52,7 @@ app.get("/api/orders", (req, res) => {
   }
 });
 
-// start server (ALWAYS LAST)
+// start server
 app.listen(3000, () => {
   console.log("Server running at http://localhost:3000");
 });
