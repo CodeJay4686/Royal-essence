@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const promoProducts = require('../data/promoProducts');
+const promoProducts = require('..promoProducts');
 
 let promoCart = {};
 
@@ -31,3 +31,4 @@ router.get('/', (req, res) => {
 });
 
 module.exports = router;
+
