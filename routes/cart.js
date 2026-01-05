@@ -1,13 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 
-/* backend product catalog */
-const products = [
-  { id: 1, name: "Baccarat Rouge 540", price: 100, image: "/images/asad.png" },
-  { id: 2, name: "Dior Sauvage Elixir", price: 45000, image: "/images/Asad2.png" },
-  { id: 3, name: "Tom Ford Oud Wood", price: 48000, image: "/images/jean_lowe.png" },
-  { id: 4, name: "YSL Y EDP", price: 42000, image: "/images/Armaf-club-de-nuit-intense-man-eau-de-toilette-for-men.jpg" }
-];
+const products = require(path.join(__dirname, '../product.js'));
 
 function getCart(req) {
   if (!req.session.cart) req.session.cart = {};
@@ -20,11 +15,17 @@ router.get('/', (req, res) => {
 
 router.post('/add/:id', (req, res) => {
   const cart = getCart(req);
-  const product = products.find(p => p.id == req.params.id);
-  if (!product) return res.status(404).json({ error: 'Product not found' });
+  const id = Number(req.params.id);
 
-  if (!cart[product.id]) {
-    cart[product.id] = product;
+  const product = products.find(p => p.id === id);
+  if (!product) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+
+  if (!cart[id]) {
+    cart[id] = { ...product, quantity: 1 };
+  } else {
+    cart[id].quantity += 1;
   }
 
   res.json(cart);
@@ -36,8 +37,9 @@ router.post('/remove/:id', (req, res) => {
   res.json(cart);
 });
 
-module.exports = router;
-router.post("/clear", (req, res) => {
+router.post('/clear', (req, res) => {
   req.session.cart = {};
   res.json({ cleared: true });
 });
+
+module.exports = router;
