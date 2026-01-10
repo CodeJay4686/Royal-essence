@@ -10,7 +10,7 @@ module.exports = [
     id: 1,
     name: "Lattafa Qaed Al Fursan Untamed",
     price: 29999,
-    image: "/images/asad.png"
+    image: "/images/quad.png"
   },
 
   {
@@ -80,6 +80,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
