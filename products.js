@@ -64,7 +64,7 @@ module.exports = [
   {
     id: 10,
     name: "Rifaaqat EDP – Emir Series",
-    price: 54999,
+    price: 49999,
     image: "/images/rifaaquat.png"
   },
   {
@@ -80,6 +80,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
