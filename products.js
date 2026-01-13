@@ -58,7 +58,7 @@ module.exports = [
   {
     id: 9,
     name: "Ramz Silver by Lattafa EDP",
-    price: 43999,
+    price: 31999,
     image: "/images/ramz.png"
   },
   {
@@ -80,6 +80,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
