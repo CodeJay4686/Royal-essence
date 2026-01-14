@@ -30,9 +30,15 @@ function saveOrder(order) {
   fs.writeFileSync(file, JSON.stringify(orders, null, 2));
 }
 
+
 /* =====================================================
    GOOGLE SHEETS SAVE (USING ENV VAR)
 ===================================================== */
+function formatItemsForSheet(items = {}) {
+  return Object.values(items)
+    .map(item => `${item.name} (₦${item.price}) x ${item.quantity || 1}`)
+    .join(", ");
+}
 
 async function saveOrderToGoogleSheet(order) {
   if (!process.env.GOOGLE_CREDS) {
@@ -54,14 +60,9 @@ async function saveOrderToGoogleSheet(order) {
 
   await doc.loadInfo();
 
-  // 🔴 DEBUG: LIST ALL TABS
-  console.log(
-    "📄 SHEET TABS:",
-    doc.sheetsByIndex.map(s => s.title)
-  );
+  console.log("📄 SHEET TABS:", doc.sheetsByIndex.map(s => s.title));
 
   const sheet = doc.sheetsByIndex[0];
-
   console.log("✍️ WRITING TO TAB:", sheet.title);
 
   await sheet.addRow({
@@ -165,4 +166,5 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
+
 
