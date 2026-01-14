@@ -1,35 +1,37 @@
 function addToCart(id) {
-  fetch(`/cart/add/${id}`, { method: 'POST' })
+  fetch(`/cart/add/${id}`, { method: "POST" })
     .then(res => {
-      if (!res.ok) throw new Error('Failed to add');
+      if (!res.ok) throw new Error("Failed to add");
       return res.json();
     })
-    .then(() => alert('Added to cart'))
+    .then(() => {
+      alert("Added to cart");
+    })
     .catch(err => {
       console.error(err);
-      alert('Product not added');
+      alert("Product not added");
     });
 }
 
 function removeFromCart(id) {
-  fetch(`/cart/remove/${id}`, { method: 'POST' })
+  fetch(`/cart/remove/${id}`, { method: "POST" })
     .then(res => res.json())
     .then(() => loadCart());
 }
 
 function loadCart() {
-  fetch('/cart')
+  fetch("/cart")
     .then(res => res.json())
     .then(cart => {
-      const cartContainer = document.getElementById('cart-items');
-      const totalEl = document.getElementById('cart-total');
-      const checkoutBtn = document.getElementById('checkout');
+      const cartContainer = document.getElementById("cart-items");
+      const totalEl = document.getElementById("cart-total");
+      const checkoutBtn = document.getElementById("checkout");
 
       if (!cartContainer || !totalEl || !checkoutBtn) return;
 
-      cartContainer.innerHTML = '';
+      cartContainer.innerHTML = "";
       let total = 0;
-      let message = 'Hello, I would like to order:%0A';
+      let message = "Hello, I would like to order:%0A";
 
       Object.values(cart).forEach(item => {
         total += item.price * (item.quantity || 1);
@@ -50,5 +52,6 @@ function loadCart() {
 
       totalEl.textContent = `₦${total.toLocaleString()}`;
       checkoutBtn.href = `https://wa.me/2349129232610?text=${message}`;
-    });
+    })
+    .catch(err => console.error("Load cart error:", err));
 }
