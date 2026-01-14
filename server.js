@@ -4,8 +4,8 @@ const path = require("path");
 const fs = require("fs");
 
 const cartRoutes = require("./routes/cart");
+const promoCartRoutes = require("./routes/promoCart");
 const paymentRoutes = require("./routes/payment");
-const promoCartRoutes = require("./routes/promoCart"); // ✅ ADD THIS
 
 const app = express();
 
@@ -13,12 +13,17 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// session
+// ✅ SESSION (FIXED FOR PAYMENT REDIRECTS)
 app.use(
   session({
+    name: "royal-essence-session",
     secret: "royal-essence-secret",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+      sameSite: "none",
+      secure: true, // REQUIRED on Render (HTTPS)
+    },
   })
 );
 
@@ -30,10 +35,8 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// normal cart
+// carts
 app.use("/cart", cartRoutes);
-
-// ✅ PROMO CART (THIS FIXES YOUR ERROR)
 app.use("/promo-cart", promoCartRoutes);
 
 // payment
