@@ -65,3 +65,19 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.add("active");
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const checkoutBtn = document.getElementById("checkout");
+  const modal = document.getElementById("customer-modal");
+
+  if (!checkoutBtn || !modal) {
+    console.error("Checkout button or modal missing");
+    return;
+  }
+
+  checkoutBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    modal.classList.add("active");
+  });
+});
+
