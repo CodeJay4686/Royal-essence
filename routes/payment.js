@@ -23,7 +23,7 @@ function formatItemsForSheet(items = {}) {
     .join(", ");
 }
 
-// ================= SAVE ORDER TO GOOGLE SHEETS =================
+// ================= GOOGLE SHEETS =================
 async function saveOrderToGoogleSheet(order) {
   const creds = JSON.parse(process.env.GOOGLE_CREDS);
 
@@ -58,10 +58,11 @@ router.get("/verify", async (req, res) => {
   const { transaction_id, tx_ref } = req.query;
 
   console.log("VERIFY QUERY PARAMS:", req.query);
+  console.log("SESSION CART:", req.session.cart);
+  console.log("SESSION CUSTOMER:", req.session.customer);
 
-  // ❗ Do NOT exit early silently
   if (!transaction_id) {
-    console.error("❌ Missing transaction_id, skipping verification");
+    console.error("❌ Missing transaction_id");
     return res.redirect("/success.html");
   }
 
@@ -79,7 +80,6 @@ router.get("/verify", async (req, res) => {
 
     payment = response.data.data;
 
-    // ✅ Accept all success states
     if (!["successful", "completed", "success"].includes(payment.status)) {
       console.error("❌ Payment not successful:", payment.status);
       return res.redirect("/success.html");
@@ -90,7 +90,7 @@ router.get("/verify", async (req, res) => {
     return res.redirect("/success.html");
   }
 
-  // ✅ BUILD ORDER
+  // ✅ BUILD ORDER (SESSION NOW SURVIVES)
   const order = {
     transactionId: payment.id,
     tx_ref,
@@ -106,14 +106,12 @@ router.get("/verify", async (req, res) => {
     paidAt: new Date().toISOString(),
   };
 
-  // ✅ SAVE LOCALLY
   try {
     saveOrder(order);
   } catch (e) {
     console.error("❌ Local save failed:", e.message);
   }
 
-  // ✅ SAVE TO GOOGLE SHEETS
   try {
     await saveOrderToGoogleSheet(order);
     console.log("✅ Order saved to Google Sheets");
@@ -121,14 +119,14 @@ router.get("/verify", async (req, res) => {
     console.error("❌ Sheets error:", e.message);
   }
 
-  // ✅ CLEAR SESSION
+  // clear session
   req.session.cart = {};
   req.session.customer = null;
 
   return res.redirect("/success.html");
 });
 
-// ================= SAVE CUSTOMER BEFORE PAYMENT =================
+// ================= SAVE CUSTOMER =================
 router.post("/save-customer", (req, res) => {
   req.session.customer = {
     name: req.body.name,
