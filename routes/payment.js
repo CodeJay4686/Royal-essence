@@ -49,7 +49,7 @@ async function saveOrderToGoogleSheet(order) {
 
   const auth = new JWT({
     email: creds.client_email,
-    key: creds.private_key.replace(/\\n/g, "\n"),
+    key: creds.private_key, // ✅ FIXED HERE
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
@@ -96,11 +96,10 @@ router.post("/save-cart", (req, res) => {
 ===================================================== */
 
 router.get("/verify", async (req, res) => {
-  const { transaction_id, status, tx_ref } = req.query;
+  const { transaction_id } = req.query;
 
   console.log("VERIFY QUERY PARAMS:", req.query);
 
-  // Never block user after payment
   if (!transaction_id) {
     return res.redirect("/success.html");
   }
@@ -129,7 +128,7 @@ router.get("/verify", async (req, res) => {
 
   const order = {
     transactionId: payment.id,
-    tx_ref,
+    tx_ref: req.query.tx_ref,
     amount: payment.amount,
     currency: payment.currency,
     customer: {
@@ -142,14 +141,12 @@ router.get("/verify", async (req, res) => {
     paidAt: new Date().toISOString(),
   };
 
-  // Always save locally (backup)
   try {
     saveOrder(order);
   } catch (err) {
     console.error("LOCAL SAVE ERROR:", err.message);
   }
 
-  // Try Google Sheets, but never block success page
   try {
     await saveOrderToGoogleSheet(order);
     console.log("✅ Order saved to Google Sheets");
@@ -157,7 +154,6 @@ router.get("/verify", async (req, res) => {
     console.error("❌ Google Sheets error:", err.message);
   }
 
-  // Clear session
   req.session.cart = {};
   req.session.customer = null;
 
