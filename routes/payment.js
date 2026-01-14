@@ -10,9 +10,15 @@ const path = require("path");
 const router = express.Router();
 const ordersFile = path.join(__dirname, "../data/orders.json");
 
-// ================= SAVE ORDER LOCALLY =================
+/* ================= SAVE ORDER LOCALLY ================= */
+
 function saveOrder(order) {
-  const orders = JSON.parse(fs.readFileSync(ordersFile, "utf8"));
+  let orders = [];
+
+  if (fs.existsSync(ordersFile)) {
+    orders = JSON.parse(fs.readFileSync(ordersFile, "utf8"));
+  }
+
   orders.push(order);
   fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
 }
@@ -23,13 +29,18 @@ function formatItemsForSheet(items = {}) {
     .join(", ");
 }
 
-// ================= GOOGLE SHEETS =================
+/* ================= GOOGLE SHEETS ================= */
+
 async function saveOrderToGoogleSheet(order) {
+  if (!process.env.GOOGLE_CREDS) {
+    throw new Error("GOOGLE_CREDS env variable is missing");
+  }
+
   const creds = JSON.parse(process.env.GOOGLE_CREDS);
 
   const auth = new JWT({
     email: creds.client_email,
-    key: creds.private_key,
+    key: creds.private_key.replace(/\\n/g, "\n"),
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
@@ -39,13 +50,14 @@ async function saveOrderToGoogleSheet(order) {
   );
 
   await doc.loadInfo();
+
   const sheet = doc.sheetsByIndex[0];
 
   await sheet.addRow({
     "Order ID": order.transactionId,
-    "Customer Name": order.customer.name,
-    "WhatsApp": order.customer.whatsapp,
-    "Location": order.customer.location,
+    "Customer Name": order.customer.name || "N/A",
+    "WhatsApp": order.customer.whatsapp || "N/A",
+    "Location": order.customer.location || "N/A",
     "Amount": order.amount,
     "Payment Ref": order.tx_ref,
     "Items": formatItemsForSheet(order.items),
@@ -53,9 +65,10 @@ async function saveOrderToGoogleSheet(order) {
   });
 }
 
-// ================= VERIFY PAYMENT =================
+/* ================= VERIFY PAYMENT ================= */
+
 router.get("/verify", async (req, res) => {
-  const { transaction_id, tx_ref } = req.query;
+  const { transaction_id, tx_ref, status } = req.query;
 
   console.log("VERIFY QUERY PARAMS:", req.query);
   console.log("SESSION CART:", req.session.cart);
@@ -81,7 +94,7 @@ router.get("/verify", async (req, res) => {
     payment = response.data.data;
 
     if (!["successful", "completed", "success"].includes(payment.status)) {
-      console.error("❌ Payment not successful:", payment.status);
+      console.error("❌ Payment status:", payment.status);
       return res.redirect("/success.html");
     }
 
@@ -90,7 +103,8 @@ router.get("/verify", async (req, res) => {
     return res.redirect("/success.html");
   }
 
-  // ✅ BUILD ORDER (SESSION NOW SURVIVES)
+  /* ================= BUILD ORDER ================= */
+
   const order = {
     transactionId: payment.id,
     tx_ref,
@@ -106,33 +120,39 @@ router.get("/verify", async (req, res) => {
     paidAt: new Date().toISOString(),
   };
 
+  /* ================= SAVE ORDER ================= */
+
   try {
     saveOrder(order);
-  } catch (e) {
-    console.error("❌ Local save failed:", e.message);
+    console.log("✅ Order saved locally");
+  } catch (err) {
+    console.error("❌ Local save failed:", err.message);
   }
 
   try {
     await saveOrderToGoogleSheet(order);
     console.log("✅ Order saved to Google Sheets");
-  } catch (e) {
-    console.error("❌ Sheets error:", e.message);
+  } catch (err) {
+    console.error("❌ Google Sheets error:", err.message);
   }
 
-  // clear session
+  /* ================= CLEAR SESSION ================= */
+
   req.session.cart = {};
   req.session.customer = null;
 
   return res.redirect("/success.html");
 });
 
-// ================= SAVE CUSTOMER =================
+/* ================= SAVE CUSTOMER ================= */
+
 router.post("/save-customer", (req, res) => {
   req.session.customer = {
     name: req.body.name,
     phone: req.body.phone,
     location: req.body.location,
   };
+
   res.json({ saved: true });
 });
 
