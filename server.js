@@ -9,11 +9,14 @@ const paymentRoutes = require("./routes/payment");
 
 const app = express();
 
-// ================= MIDDLEWARE =================
+/* ✅ REQUIRED FOR RENDER / PROXY HOSTING */
+app.set("trust proxy", 1);
+
+// parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ================= SESSION (FIXED) =================
+// ✅ SESSION (NOW ACTUALLY WORKS ONLINE)
 app.use(
   session({
     name: "royal-essence-session",
@@ -21,39 +24,27 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      secure: true,
     },
   })
 );
 
-// ================= STATIC FILES =================
+// static files
 app.use(express.static(__dirname));
 
-// ================= ROUTES =================
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
+// routes
 app.use("/cart", cartRoutes);
 app.use("/promo-cart", promoCartRoutes);
 app.use("/payment", paymentRoutes);
 
-// ================= ORDERS API =================
-app.get("/api/orders", (req, res) => {
-  const ordersPath = path.join(__dirname, "data/orders.json");
-
-  try {
-    const orders = JSON.parse(fs.readFileSync(ordersPath, "utf8"));
-    res.json(orders);
-  } catch (err) {
-    console.error("Failed to read orders:", err);
-    res.status(500).json({ error: "Unable to load orders" });
-  }
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// ================= START SERVER =================
+// start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
+
