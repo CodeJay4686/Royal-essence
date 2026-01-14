@@ -1,39 +1,45 @@
 require("dotenv").config();
 
-const { GoogleSpreadsheet } = require("google-spreadsheet");
-const { JWT } = require("google-auth-library");
 const express = require("express");
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
+const { GoogleSpreadsheet } = require("google-spreadsheet");
+const { JWT } = require("google-auth-library");
 
 const router = express.Router();
-const ordersFile = path.join(__dirname, "../data/orders.json");
 
-/* ================= SAVE ORDER LOCALLY ================= */
+/* =====================================================
+   SAFE LOCAL ORDER SAVE (BACKUP ONLY)
+===================================================== */
 
 function saveOrder(order) {
   const dir = path.join(__dirname, "../data");
   const file = path.join(dir, "orders.json");
 
-  // ✅ Ensure directory exists
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  // ✅ Ensure file exists
   if (!fs.existsSync(file)) {
     fs.writeFileSync(file, JSON.stringify([], null, 2));
   }
 
-  // ✅ Now safely read + write
   const orders = JSON.parse(fs.readFileSync(file, "utf8"));
   orders.push(order);
   fs.writeFileSync(file, JSON.stringify(orders, null, 2));
 }
 
+/* =====================================================
+   GOOGLE SHEETS SAVE (USING ENV VAR)
+===================================================== */
 
-/* ================= GOOGLE SHEETS ================= */
+function formatItemsForSheet(items = {}) {
+  return Object.values(items)
+    .map(i => `${i.name} (₦${i.price}) x ${i.quantity || 1}`)
+    .join(", ");
+}
+
 async function saveOrderToGoogleSheet(order) {
   if (!process.env.GOOGLE_CREDS) {
     throw new Error("GOOGLE_CREDS env variable missing");
@@ -41,7 +47,7 @@ async function saveOrderToGoogleSheet(order) {
 
   const creds = JSON.parse(process.env.GOOGLE_CREDS);
 
-  const serviceAccountAuth = new JWT({
+  const auth = new JWT({
     email: creds.client_email,
     key: creds.private_key.replace(/\\n/g, "\n"),
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
@@ -49,7 +55,7 @@ async function saveOrderToGoogleSheet(order) {
 
   const doc = new GoogleSpreadsheet(
     "1fJG8T4hnNtW74d91zxi9ZkLXYIS8L3Nu_NeM-P4Or-k",
-    serviceAccountAuth
+    auth
   );
 
   await doc.loadInfo();
@@ -67,36 +73,39 @@ async function saveOrderToGoogleSheet(order) {
   });
 }
 
-
-/* ================= SAVE CUSTOMER BEFORE PAYMENT ================= */
+/* =====================================================
+   SAVE CUSTOMER + CART BEFORE PAYMENT
+===================================================== */
 
 router.post("/save-customer", (req, res) => {
   req.session.customer = {
     name: req.body.name,
-    phone: req.body.phone,
+    whatsapp: req.body.phone,
     location: req.body.location,
   };
   res.json({ saved: true });
 });
-
-/* ================= SAVE CART BEFORE PAYMENT (ADDED) ================= */
 
 router.post("/save-cart", (req, res) => {
   req.session.cart = req.body.cart || {};
   res.json({ saved: true });
 });
 
-/* ================= VERIFY PAYMENT ================= */
+/* =====================================================
+   VERIFY PAYMENT (FLUTTERWAVE CALLBACK)
+===================================================== */
 
 router.get("/verify", async (req, res) => {
   const { transaction_id, status, tx_ref } = req.query;
 
   console.log("VERIFY QUERY PARAMS:", req.query);
 
-  // ✅ KEEP ORIGINAL VALIDATION
-  if (!["successful", "completed"].includes(status) || !transaction_id) {
+  // Never block user after payment
+  if (!transaction_id) {
     return res.redirect("/success.html");
   }
+
+  let payment;
 
   try {
     const response = await axios.get(
@@ -108,51 +117,51 @@ router.get("/verify", async (req, res) => {
       }
     );
 
-    const payment = response.data.data;
+    payment = response.data.data;
 
-    if (payment.status !== "successful") {
+    if (!["successful", "completed"].includes(payment.status)) {
       return res.redirect("/success.html");
     }
-
-    const order = {
-      transactionId: payment.id,
-      tx_ref,
-      amount: payment.amount,
-      currency: payment.currency,
-      customer: {
-        name: req.session.customer?.name || "N/A",
-        whatsapp: req.session.customer?.phone || "N/A",
-        location: req.session.customer?.location || "N/A",
-        email: payment.customer?.email || "N/A",
-      },
-      items: req.session.cart || {},
-      paidAt: new Date().toISOString(),
-    };
-
-    // ✅ ALWAYS SAVE LOCALLY
-    saveOrder(order);
-
-    // ✅ TRY GOOGLE SHEETS, NEVER BLOCK USER
-    try {
-      await saveOrderToGoogleSheet(order);
-      console.log("✅ Order saved to Google Sheets");
-    } catch (sheetError) {
-      console.error("❌ Google Sheets error:", sheetError.message);
-    }
-
-    // ✅ CLEAR SESSION
-    req.session.cart = {};
-    req.session.customer = null;
-
-    // ✅ ALWAYS GO TO SUCCESS
-    return res.redirect("/success.html");
-
-  } catch (error) {
-    console.error("VERIFY ERROR:", error.message);
+  } catch (err) {
+    console.error("FLUTTERWAVE VERIFY ERROR:", err.message);
     return res.redirect("/success.html");
   }
+
+  const order = {
+    transactionId: payment.id,
+    tx_ref,
+    amount: payment.amount,
+    currency: payment.currency,
+    customer: {
+      name: req.session.customer?.name || "N/A",
+      whatsapp: req.session.customer?.whatsapp || "N/A",
+      location: req.session.customer?.location || "N/A",
+      email: payment.customer?.email || "N/A",
+    },
+    items: req.session.cart || {},
+    paidAt: new Date().toISOString(),
+  };
+
+  // Always save locally (backup)
+  try {
+    saveOrder(order);
+  } catch (err) {
+    console.error("LOCAL SAVE ERROR:", err.message);
+  }
+
+  // Try Google Sheets, but never block success page
+  try {
+    await saveOrderToGoogleSheet(order);
+    console.log("✅ Order saved to Google Sheets");
+  } catch (err) {
+    console.error("❌ Google Sheets error:", err.message);
+  }
+
+  // Clear session
+  req.session.cart = {};
+  req.session.customer = null;
+
+  return res.redirect("/success.html");
 });
 
 module.exports = router;
-
-
