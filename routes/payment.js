@@ -19,7 +19,7 @@ function saveOrder(order) {
 
 function formatItemsForSheet(items = {}) {
   return Object.values(items)
-    .map(item => `${item.name} (₦${item.price})`)
+    .map(item => `${item.name} (₦${item.price}) x ${item.quantity || 1}`)
     .join(", ");
 }
 
@@ -43,9 +43,9 @@ async function saveOrderToGoogleSheet(order) {
 
   await sheet.addRow({
     "Order ID": order.transactionId,
-    "Customer Name": order.customer?.name || "N/A",
-    "WhatsApp": order.customer?.whatsapp || "N/A",
-    "Location": order.customer?.location || "N/A",
+    "Customer Name": order.customer.name,
+    "WhatsApp": order.customer.whatsapp,
+    "Location": order.customer.location,
     "Amount": order.amount,
     "Payment Ref": order.tx_ref,
     "Items": formatItemsForSheet(order.items),
@@ -55,11 +55,13 @@ async function saveOrderToGoogleSheet(order) {
 
 // ================= VERIFY PAYMENT =================
 router.get("/verify", async (req, res) => {
-  const { transaction_id, status, tx_ref } = req.query;
+  const { transaction_id, tx_ref } = req.query;
 
   console.log("VERIFY QUERY PARAMS:", req.query);
 
+  // ❗ Do NOT exit early silently
   if (!transaction_id) {
+    console.error("❌ Missing transaction_id, skipping verification");
     return res.redirect("/success.html");
   }
 
@@ -77,7 +79,9 @@ router.get("/verify", async (req, res) => {
 
     payment = response.data.data;
 
-    if (payment.status !== "successful") {
+    // ✅ Accept all success states
+    if (!["successful", "completed", "success"].includes(payment.status)) {
+      console.error("❌ Payment not successful:", payment.status);
       return res.redirect("/success.html");
     }
 
@@ -86,7 +90,7 @@ router.get("/verify", async (req, res) => {
     return res.redirect("/success.html");
   }
 
-  // ✅ BUILD ORDER (never crash)
+  // ✅ BUILD ORDER
   const order = {
     transactionId: payment.id,
     tx_ref,
@@ -102,14 +106,14 @@ router.get("/verify", async (req, res) => {
     paidAt: new Date().toISOString(),
   };
 
-  // ✅ SAVE LOCALLY (must succeed)
+  // ✅ SAVE LOCALLY
   try {
     saveOrder(order);
   } catch (e) {
     console.error("❌ Local save failed:", e.message);
   }
 
-  // ✅ SAVE TO GOOGLE SHEETS (optional)
+  // ✅ SAVE TO GOOGLE SHEETS
   try {
     await saveOrderToGoogleSheet(order);
     console.log("✅ Order saved to Google Sheets");
@@ -121,7 +125,6 @@ router.get("/verify", async (req, res) => {
   req.session.cart = {};
   req.session.customer = null;
 
-  // ✅ ALWAYS REDIRECT
   return res.redirect("/success.html");
 });
 
