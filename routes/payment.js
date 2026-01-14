@@ -1,20 +1,20 @@
 require("dotenv").config();
 
+const { GoogleSpreadsheet } = require("google-spreadsheet");
+const { JWT } = require("google-auth-library");
 const express = require("express");
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
-const { GoogleSpreadsheet } = require("google-spreadsheet");
-const { JWT } = require("google-auth-library");
 
 const router = express.Router();
 const ordersFile = path.join(__dirname, "../data/orders.json");
 
-/* =====================================================
-   LOCAL SAVE (BACKUP)
-===================================================== */
+/* ======================================================
+   LOCAL ORDER SAVE
+====================================================== */
 
-function saveOrderLocally(order) {
+function saveOrder(order) {
   let orders = [];
 
   if (fs.existsSync(ordersFile)) {
@@ -25,13 +25,19 @@ function saveOrderLocally(order) {
   fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
 }
 
-/* =====================================================
+function formatItemsForSheet(items = {}) {
+  return Object.values(items)
+    .map(i => `${i.name} (₦${i.price}) x ${i.quantity || 1}`)
+    .join(", ");
+}
+
+/* ======================================================
    GOOGLE SHEETS
-===================================================== */
+====================================================== */
 
 async function saveOrderToGoogleSheet(order) {
   if (!process.env.GOOGLE_CREDS) {
-    throw new Error("GOOGLE_CREDS env variable missing");
+    throw new Error("GOOGLE_CREDS missing");
   }
 
   const creds = JSON.parse(process.env.GOOGLE_CREDS);
@@ -50,10 +56,6 @@ async function saveOrderToGoogleSheet(order) {
   await doc.loadInfo();
   const sheet = doc.sheetsByIndex[0];
 
-  const itemsString = Object.values(order.items)
-    .map(i => `${i.name} (₦${i.price}) x ${i.quantity || 1}`)
-    .join(", ");
-
   await sheet.addRow({
     "Order ID": order.transactionId,
     "Customer Name": order.customer.name,
@@ -62,14 +64,14 @@ async function saveOrderToGoogleSheet(order) {
     "Amount": order.amount,
     "Currency": order.currency,
     "Payment Ref": order.tx_ref,
-    "Items": itemsString,
+    "Items": formatItemsForSheet(order.items),
     "Date": new Date().toLocaleString(),
   });
 }
 
-/* =====================================================
+/* ======================================================
    SAVE CUSTOMER + CART (BEFORE PAYMENT)
-===================================================== */
+====================================================== */
 
 router.post("/save-customer", (req, res) => {
   req.session.customer = {
@@ -78,24 +80,20 @@ router.post("/save-customer", (req, res) => {
     location: req.body.location,
   };
 
-  console.log("✅ CUSTOMER SAVED:", req.session.customer);
   res.json({ saved: true });
 });
 
 router.post("/save-cart", (req, res) => {
   req.session.cart = req.body.cart || {};
-  console.log("✅ CART SAVED:", req.session.cart);
   res.json({ saved: true });
 });
 
-/* =====================================================
-   VERIFY PAYMENT (AFTER FLUTTERWAVE)
-===================================================== */
+/* ======================================================
+   VERIFY PAYMENT (AFTER FLUTTERWAVE REDIRECT)
+====================================================== */
 
 router.get("/verify", async (req, res) => {
   const { transaction_id, tx_ref } = req.query;
-
-  console.log("🔍 VERIFY HIT:", req.query);
 
   if (!transaction_id) {
     console.error("❌ Missing transaction_id");
@@ -103,10 +101,7 @@ router.get("/verify", async (req, res) => {
   }
 
   if (!req.session.cart || !req.session.customer) {
-    console.error("❌ SESSION LOST", {
-      cart: req.session.cart,
-      customer: req.session.customer,
-    });
+    console.error("❌ Session lost on redirect");
     return res.redirect("/cart.html");
   }
 
@@ -124,18 +119,18 @@ router.get("/verify", async (req, res) => {
 
     payment = response.data.data;
 
-    console.log("✅ FLUTTERWAVE VERIFIED:", payment.status);
-
     if (!["successful", "completed"].includes(payment.status)) {
       console.error("❌ Payment not successful:", payment.status);
       return res.redirect("/cart.html");
     }
   } catch (err) {
-    console.error("❌ FLUTTERWAVE VERIFY ERROR:", err.response?.data || err);
+    console.error("❌ Verification failed:", err.message);
     return res.redirect("/cart.html");
   }
 
-  /* ================= BUILD ORDER ================= */
+  /* ======================================================
+     BUILD ORDER
+  ====================================================== */
 
   const order = {
     transactionId: payment.id,
@@ -152,20 +147,21 @@ router.get("/verify", async (req, res) => {
     paidAt: new Date().toISOString(),
   };
 
-  console.log("📦 ORDER BUILT:", order);
-
-  /* ================= SAVE ORDER ================= */
+  /* ======================================================
+     SAVE ORDER
+  ====================================================== */
 
   try {
-    saveOrderLocally(order);
+    saveOrder(order);
     await saveOrderToGoogleSheet(order);
-    console.log("✅ ORDER SAVED TO GOOGLE SHEETS");
+    console.log("✅ Order saved (local + sheet)");
   } catch (err) {
-    console.error("❌ GOOGLE SHEETS SAVE FAILED:", err);
-    return res.redirect("/cart.html");
+    console.error("❌ Order save error:", err.message);
   }
 
-  /* ================= CLEAR SESSION ================= */
+  /* ======================================================
+     CLEAR SESSION
+  ====================================================== */
 
   req.session.cart = null;
   req.session.customer = null;
