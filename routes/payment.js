@@ -10,7 +10,9 @@ const path = require("path");
 const router = express.Router();
 const ordersFile = path.join(__dirname, "../data/orders.json");
 
-/* ================= SAVE ORDER LOCALLY ================= */
+/* ======================================================
+   LOCAL ORDER SAVE
+====================================================== */
 
 function saveOrder(order) {
   let orders = [];
@@ -25,15 +27,17 @@ function saveOrder(order) {
 
 function formatItemsForSheet(items = {}) {
   return Object.values(items)
-    .map(item => `${item.name} (₦${item.price}) x ${item.quantity || 1}`)
+    .map(i => `${i.name} (₦${i.price}) x ${i.quantity || 1}`)
     .join(", ");
 }
 
-/* ================= GOOGLE SHEETS ================= */
+/* ======================================================
+   GOOGLE SHEETS
+====================================================== */
 
 async function saveOrderToGoogleSheet(order) {
   if (!process.env.GOOGLE_CREDS) {
-    throw new Error("GOOGLE_CREDS env variable is missing");
+    throw new Error("GOOGLE_CREDS missing");
   }
 
   const creds = JSON.parse(process.env.GOOGLE_CREDS);
@@ -50,33 +54,55 @@ async function saveOrderToGoogleSheet(order) {
   );
 
   await doc.loadInfo();
-
   const sheet = doc.sheetsByIndex[0];
 
   await sheet.addRow({
     "Order ID": order.transactionId,
-    "Customer Name": order.customer.name || "N/A",
-    "WhatsApp": order.customer.whatsapp || "N/A",
-    "Location": order.customer.location || "N/A",
+    "Customer Name": order.customer.name,
+    "WhatsApp": order.customer.whatsapp,
+    "Location": order.customer.location,
     "Amount": order.amount,
+    "Currency": order.currency,
     "Payment Ref": order.tx_ref,
     "Items": formatItemsForSheet(order.items),
     "Date": new Date().toLocaleString(),
   });
 }
 
-/* ================= VERIFY PAYMENT ================= */
+/* ======================================================
+   SAVE CUSTOMER + CART (BEFORE PAYMENT)
+====================================================== */
+
+router.post("/save-customer", (req, res) => {
+  req.session.customer = {
+    name: req.body.name,
+    whatsapp: req.body.phone,
+    location: req.body.location,
+  };
+
+  res.json({ saved: true });
+});
+
+router.post("/save-cart", (req, res) => {
+  req.session.cart = req.body.cart || {};
+  res.json({ saved: true });
+});
+
+/* ======================================================
+   VERIFY PAYMENT (AFTER FLUTTERWAVE REDIRECT)
+====================================================== */
 
 router.get("/verify", async (req, res) => {
-  const { transaction_id, tx_ref, status } = req.query;
-
-  console.log("VERIFY QUERY PARAMS:", req.query);
-  console.log("SESSION CART:", req.session.cart);
-  console.log("SESSION CUSTOMER:", req.session.customer);
+  const { transaction_id, tx_ref } = req.query;
 
   if (!transaction_id) {
     console.error("❌ Missing transaction_id");
-    return res.redirect("/success.html");
+    return res.redirect("/cart.html");
+  }
+
+  if (!req.session.cart || !req.session.customer) {
+    console.error("❌ Session lost on redirect");
+    return res.redirect("/cart.html");
   }
 
   let payment;
@@ -93,17 +119,18 @@ router.get("/verify", async (req, res) => {
 
     payment = response.data.data;
 
-    if (!["successful", "completed", "success"].includes(payment.status)) {
-      console.error("❌ Payment status:", payment.status);
-      return res.redirect("/success.html");
+    if (!["successful", "completed"].includes(payment.status)) {
+      console.error("❌ Payment not successful:", payment.status);
+      return res.redirect("/cart.html");
     }
-
   } catch (err) {
     console.error("❌ Verification failed:", err.message);
-    return res.redirect("/success.html");
+    return res.redirect("/cart.html");
   }
 
-  /* ================= BUILD ORDER ================= */
+  /* ======================================================
+     BUILD ORDER
+  ====================================================== */
 
   const order = {
     transactionId: payment.id,
@@ -111,49 +138,35 @@ router.get("/verify", async (req, res) => {
     amount: payment.amount,
     currency: payment.currency,
     customer: {
-      name: req.session.customer?.name || "N/A",
-      whatsapp: req.session.customer?.phone || "N/A",
-      location: req.session.customer?.location || "N/A",
+      name: req.session.customer.name,
+      whatsapp: req.session.customer.whatsapp,
+      location: req.session.customer.location,
       email: payment.customer?.email || "N/A",
     },
-    items: req.session.cart || {},
+    items: req.session.cart,
     paidAt: new Date().toISOString(),
   };
 
-  /* ================= SAVE ORDER ================= */
+  /* ======================================================
+     SAVE ORDER
+  ====================================================== */
 
   try {
     saveOrder(order);
-    console.log("✅ Order saved locally");
-  } catch (err) {
-    console.error("❌ Local save failed:", err.message);
-  }
-
-  try {
     await saveOrderToGoogleSheet(order);
-    console.log("✅ Order saved to Google Sheets");
+    console.log("✅ Order saved (local + sheet)");
   } catch (err) {
-    console.error("❌ Google Sheets error:", err.message);
+    console.error("❌ Order save error:", err.message);
   }
 
-  /* ================= CLEAR SESSION ================= */
+  /* ======================================================
+     CLEAR SESSION
+  ====================================================== */
 
-  req.session.cart = {};
+  req.session.cart = null;
   req.session.customer = null;
 
   return res.redirect("/success.html");
-});
-
-/* ================= SAVE CUSTOMER ================= */
-
-router.post("/save-customer", (req, res) => {
-  req.session.customer = {
-    name: req.body.name,
-    phone: req.body.phone,
-    location: req.body.location,
-  };
-
-  res.json({ saved: true });
 });
 
 module.exports = router;
