@@ -1,11 +1,14 @@
 function addToCart(id) {
-  fetch(`/cart/add/${id}`, { method: "POST" })
+  fetch(`/cart/add/${id}`, {
+    method: "POST",
+  })
     .then(res => {
       if (!res.ok) throw new Error("Failed to add");
       return res.json();
     })
     .then(() => {
       alert("Added to cart");
+      loadCart(); // ✅ IMPORTANT: refresh cart UI
     })
     .catch(err => {
       console.error(err);
@@ -14,7 +17,9 @@ function addToCart(id) {
 }
 
 function removeFromCart(id) {
-  fetch(`/cart/remove/${id}`, { method: "POST" })
+  fetch(`/cart/remove/${id}`, {
+    method: "POST",
+  })
     .then(res => res.json())
     .then(() => loadCart());
 }
@@ -42,12 +47,13 @@ function loadCart() {
             <div class="cart-info">
               <h3>${item.name}</h3>
               <p>₦${item.price.toLocaleString()}</p>
+              <p>Qty: ${item.quantity}</p>
               <button onclick="removeFromCart(${item.id})">Remove</button>
             </div>
           </div>
         `;
 
-        message += `${item.name} - ₦${item.price}%0A`;
+        message += `${item.name} x${item.quantity} - ₦${item.price}%0A`;
       });
 
       totalEl.textContent = `₦${total.toLocaleString()}`;
