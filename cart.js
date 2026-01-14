@@ -1,14 +1,12 @@
 function addToCart(id) {
-  fetch(`/cart/add/${id}`, {
-    method: "POST",
-  })
+  fetch(`/cart/add/${id}`, { method: "POST" })
     .then(res => {
       if (!res.ok) throw new Error("Failed to add");
       return res.json();
     })
     .then(() => {
       alert("Added to cart");
-      loadCart(); // ✅ IMPORTANT: refresh cart UI
+      loadCart();
     })
     .catch(err => {
       console.error(err);
@@ -17,9 +15,7 @@ function addToCart(id) {
 }
 
 function removeFromCart(id) {
-  fetch(`/cart/remove/${id}`, {
-    method: "POST",
-  })
+  fetch(`/cart/remove/${id}`, { method: "POST" })
     .then(res => res.json())
     .then(() => loadCart());
 }
@@ -30,13 +26,11 @@ function loadCart() {
     .then(cart => {
       const cartContainer = document.getElementById("cart-items");
       const totalEl = document.getElementById("cart-total");
-      const checkoutBtn = document.getElementById("checkout");
 
-      if (!cartContainer || !totalEl || !checkoutBtn) return;
+      if (!cartContainer || !totalEl) return;
 
       cartContainer.innerHTML = "";
       let total = 0;
-      let message = "Hello, I would like to order:%0A";
 
       Object.values(cart).forEach(item => {
         total += item.price * (item.quantity || 1);
@@ -52,12 +46,22 @@ function loadCart() {
             </div>
           </div>
         `;
-
-        message += `${item.name} x${item.quantity} - ₦${item.price}%0A`;
       });
 
       totalEl.textContent = `₦${total.toLocaleString()}`;
-      checkoutBtn.href = `https://wa.me/2349129232610?text=${message}`;
     })
     .catch(err => console.error("Load cart error:", err));
 }
+
+/* ================= OPEN PAYMENT MODAL ================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const checkoutBtn = document.getElementById("checkout");
+  const modal = document.getElementById("customer-modal");
+
+  if (!checkoutBtn || !modal) return;
+
+  checkoutBtn.addEventListener("click", () => {
+    modal.classList.add("active");
+  });
+});
