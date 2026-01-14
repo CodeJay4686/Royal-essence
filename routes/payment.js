@@ -13,16 +13,25 @@ const ordersFile = path.join(__dirname, "../data/orders.json");
 /* ================= SAVE ORDER LOCALLY ================= */
 
 function saveOrder(order) {
-  const orders = JSON.parse(fs.readFileSync(ordersFile, "utf8"));
+  const dir = path.join(__dirname, "../data");
+  const file = path.join(dir, "orders.json");
+
+  // ✅ Ensure directory exists
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  // ✅ Ensure file exists
+  if (!fs.existsSync(file)) {
+    fs.writeFileSync(file, JSON.stringify([], null, 2));
+  }
+
+  // ✅ Now safely read + write
+  const orders = JSON.parse(fs.readFileSync(file, "utf8"));
   orders.push(order);
-  fs.writeFileSync(ordersFile, JSON.stringify(orders, null, 2));
+  fs.writeFileSync(file, JSON.stringify(orders, null, 2));
 }
 
-function formatItemsForSheet(items = {}) {
-  return Object.values(items)
-    .map(item => `${item.name} (₦${item.price}) x ${item.quantity || 1}`)
-    .join(", ");
-}
 
 /* ================= GOOGLE SHEETS ================= */
 
@@ -142,3 +151,4 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
+
