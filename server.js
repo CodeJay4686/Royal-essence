@@ -9,11 +9,11 @@ const paymentRoutes = require("./routes/payment");
 
 const app = express();
 
-// parsers
+// ================= MIDDLEWARE =================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ SESSION (FIXED FOR PAYMENT REDIRECTS)
+// ================= SESSION (FIXED) =================
 app.use(
   session({
     name: "royal-essence-session",
@@ -21,28 +21,25 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      sameSite: "none",
-      secure: true, // REQUIRED on Render (HTTPS)
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
     },
   })
 );
 
-// static files
+// ================= STATIC FILES =================
 app.use(express.static(__dirname));
 
-// home page
+// ================= ROUTES =================
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// carts
 app.use("/cart", cartRoutes);
 app.use("/promo-cart", promoCartRoutes);
-
-// payment
 app.use("/payment", paymentRoutes);
 
-// orders api
+// ================= ORDERS API =================
 app.get("/api/orders", (req, res) => {
   const ordersPath = path.join(__dirname, "data/orders.json");
 
@@ -55,7 +52,8 @@ app.get("/api/orders", (req, res) => {
   }
 });
 
-// start server
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
+// ================= START SERVER =================
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
