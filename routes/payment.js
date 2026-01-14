@@ -34,14 +34,16 @@ function saveOrder(order) {
 
 
 /* ================= GOOGLE SHEETS ================= */
-
 async function saveOrderToGoogleSheet(order) {
-  // ✅ KEEP ORIGINAL, WORKING CREDS METHOD
-  const creds = require("../google-credentials.json");
+  if (!process.env.GOOGLE_CREDS) {
+    throw new Error("GOOGLE_CREDS env variable missing");
+  }
+
+  const creds = JSON.parse(process.env.GOOGLE_CREDS);
 
   const serviceAccountAuth = new JWT({
     email: creds.client_email,
-    key: creds.private_key,
+    key: creds.private_key.replace(/\\n/g, "\n"),
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
@@ -64,6 +66,7 @@ async function saveOrderToGoogleSheet(order) {
     "Date": new Date().toLocaleString(),
   });
 }
+
 
 /* ================= SAVE CUSTOMER BEFORE PAYMENT ================= */
 
@@ -151,4 +154,5 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
+
 
