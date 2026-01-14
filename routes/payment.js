@@ -34,12 +34,6 @@ function saveOrder(order) {
    GOOGLE SHEETS SAVE (USING ENV VAR)
 ===================================================== */
 
-function formatItemsForSheet(items = {}) {
-  return Object.values(items)
-    .map(i => `${i.name} (₦${i.price}) x ${i.quantity || 1}`)
-    .join(", ");
-}
-
 async function saveOrderToGoogleSheet(order) {
   if (!process.env.GOOGLE_CREDS) {
     throw new Error("GOOGLE_CREDS env variable missing");
@@ -49,7 +43,7 @@ async function saveOrderToGoogleSheet(order) {
 
   const auth = new JWT({
     email: creds.client_email,
-    key: creds.private_key, // ✅ FIXED HERE
+    key: creds.private_key,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
 
@@ -59,7 +53,16 @@ async function saveOrderToGoogleSheet(order) {
   );
 
   await doc.loadInfo();
+
+  // 🔴 DEBUG: LIST ALL TABS
+  console.log(
+    "📄 SHEET TABS:",
+    doc.sheetsByIndex.map(s => s.title)
+  );
+
   const sheet = doc.sheetsByIndex[0];
+
+  console.log("✍️ WRITING TO TAB:", sheet.title);
 
   await sheet.addRow({
     "Order ID": order.transactionId,
@@ -72,6 +75,7 @@ async function saveOrderToGoogleSheet(order) {
     "Date": new Date().toLocaleString(),
   });
 }
+
 
 /* =====================================================
    SAVE CUSTOMER + CART BEFORE PAYMENT
@@ -161,3 +165,4 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
+
