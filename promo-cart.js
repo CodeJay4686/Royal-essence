@@ -1,4 +1,3 @@
-/* ================= ADD TO CART ================= */
 function addToCart(id) {
   fetch(`/cart/add/${id}`, { method: "POST" })
     .then(res => {
@@ -15,15 +14,12 @@ function addToCart(id) {
     });
 }
 
-/* ================= REMOVE FROM CART ================= */
 function removeFromCart(id) {
   fetch(`/cart/remove/${id}`, { method: "POST" })
     .then(res => res.json())
-    .then(() => loadCart())
-    .catch(err => console.error(err));
+    .then(() => loadCart());
 }
 
-/* ================= LOAD CART ================= */
 function loadCart() {
   fetch("/cart")
     .then(res => res.json())
@@ -37,8 +33,7 @@ function loadCart() {
       let total = 0;
 
       Object.values(cart).forEach(item => {
-        const qty = item.quantity || 1;
-        total += item.price * qty;
+        total += item.price * (item.quantity || 1);
 
         cartContainer.innerHTML += `
           <div class="cart-item">
@@ -46,7 +41,7 @@ function loadCart() {
             <div class="cart-info">
               <h3>${item.name}</h3>
               <p>₦${item.price.toLocaleString()}</p>
-              <p>Qty: ${qty}</p>
+              <p>Qty: ${item.quantity || 1}</p>
               <button onclick="removeFromCart('${item.id}')">Remove</button>
             </div>
           </div>
@@ -58,14 +53,15 @@ function loadCart() {
     .catch(err => console.error("Load cart error:", err));
 }
 
-/* ================= PAYMENT MODAL ================= */
+/* ================= OPEN PAYMENT MODAL ================= */
+
 document.addEventListener("DOMContentLoaded", () => {
   const checkoutBtn = document.getElementById("checkout");
   const modal = document.getElementById("customer-modal");
 
   if (!checkoutBtn || !modal) return;
 
-  checkoutBtn.addEventListener("click", e => {
+  checkoutBtn.addEventListener("click", (e) => {
     e.preventDefault();
     modal.classList.add("active");
   });
