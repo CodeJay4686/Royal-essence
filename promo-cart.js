@@ -1,12 +1,13 @@
-function addToCart(id) {
-  fetch(`/cart/add/${id}`, { method: "POST" })
+function addToPromoCart(id) {
+  fetch(`/promo-cart/add/${id}`, {
+    method: "POST"
+  })
     .then(res => {
-      if (!res.ok) throw new Error("Failed to add");
+      if (!res.ok) throw new Error("Failed");
       return res.json();
     })
     .then(() => {
       alert("Added to cart");
-      loadPromoCart();
     })
     .catch(err => {
       console.error(err);
@@ -14,15 +15,16 @@ function addToCart(id) {
     });
 }
 
-function removeFromCart(id) {
-  fetch(`/cart/remove/${id}`, { method: "POST" })
+function removeFromPromoCart(id) {
+  fetch(`/promo-cart/remove/${id}`, {
+    method: "POST"
+  })
     .then(res => res.json())
     .then(() => loadPromoCart());
 }
 
-/* ===== THIS IS THE ONLY THING YOUR HTML WAS MISSING ===== */
 function loadPromoCart() {
-  fetch("/cart")
+  fetch("/promo-cart")
     .then(res => res.json())
     .then(cart => {
       const cartContainer = document.getElementById("cart-items");
@@ -34,7 +36,7 @@ function loadPromoCart() {
       let total = 0;
 
       Object.values(cart).forEach(item => {
-        total += item.price * (item.quantity || 1);
+        total += item.price * item.quantity;
 
         cartContainer.innerHTML += `
           <div class="cart-item">
@@ -43,7 +45,7 @@ function loadPromoCart() {
               <h3>${item.name}</h3>
               <p>₦${item.price.toLocaleString()}</p>
               <p>Qty: ${item.quantity}</p>
-              <button onclick="removeFromCart(${item.id})">Remove</button>
+              <button onclick="removeFromPromoCart(${item.id})">Remove</button>
             </div>
           </div>
         `;
@@ -51,33 +53,5 @@ function loadPromoCart() {
 
       totalEl.textContent = `₦${total.toLocaleString()}`;
     })
-    .catch(err => console.error("Load cart error:", err));
+    .catch(err => console.error(err));
 }
-
-/* ================= OPEN PAYMENT MODAL ================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  const checkoutBtn = document.getElementById("checkout");
-  const modal = document.getElementById("customer-modal");
-
-  if (!checkoutBtn || !modal) return;
-
-  checkoutBtn.addEventListener("click", () => {
-    modal.classList.add("active");
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const checkoutBtn = document.getElementById("checkout");
-  const modal = document.getElementById("customer-modal");
-
-  if (!checkoutBtn || !modal) {
-    console.error("Checkout button or modal missing");
-    return;
-  }
-
-  checkoutBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    modal.classList.add("active");
-  });
-});
