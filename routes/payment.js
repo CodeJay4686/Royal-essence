@@ -9,36 +9,53 @@ const { JWT } = require("google-auth-library");
 
 const router = express.Router();
 
-/* =====================================================
-   SAFE LOCAL ORDER SAVE (BACKUP ONLY)
-===================================================== */
+/* ================= LOCAL BACKUP SAVE ================= */
 
 function saveOrder(order) {
   const dir = path.join(__dirname, "../data");
   const file = path.join(dir, "orders.json");
 
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-
-  if (!fs.existsSync(file)) {
-    fs.writeFileSync(file, JSON.stringify([], null, 2));
-  }
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(file)) fs.writeFileSync(file, JSON.stringify([], null, 2));
 
   const orders = JSON.parse(fs.readFileSync(file, "utf8"));
   orders.push(order);
   fs.writeFileSync(file, JSON.stringify(orders, null, 2));
 }
 
+/* ================= GOOGLE SHEETS HELPERS ================= */
 
-/* =====================================================
-   GOOGLE SHEETS SAVE (USING ENV VAR)
-===================================================== */
-async function saveOrderToGoogleSheet(order) {
-  if (!process.env.GOOGLE_CREDS) {
-    throw new Error("GOOGLE_CREDS env variable missing");
+function formatItemsForSheet(items = {}) {
+  return Object.values(items)
+    .map(i => `${i.name} (₦${i.price}) x ${i.quantity || 1}`)
+    .join(", ");
+}
+
+async function ensureHeaders(sheet) {
+  const headers = [
+    "Order ID",
+    "Customer Name",
+    "WhatsApp",
+    "Location",
+    "Amount",
+    "Payment Ref",
+    "Items",
+    "Date",
+  ];
+
+  await sheet.loadHeaderRow();
+
+  if (
+    !sheet.headerValues ||
+    sheet.headerValues.join() !== headers.join()
+  ) {
+    await sheet.setHeaderRow(headers);
   }
+}
 
+/* ================= GOOGLE SHEETS SAVE ================= */
+
+async function saveOrderToGoogleSheet(order) {
   const creds = JSON.parse(process.env.GOOGLE_CREDS);
 
   const auth = new JWT({
@@ -56,7 +73,9 @@ async function saveOrderToGoogleSheet(order) {
 
   const sheet = doc.sheetsByIndex[0];
 
-  // ✅ THIS NOW EXISTS
+  console.log("📄 SHEET TABS:", doc.sheetsByIndex.map(s => s.title));
+  console.log("✍️ WRITING TO TAB:", sheet.title);
+
   await ensureHeaders(sheet);
 
   const row = await sheet.addRow({
@@ -73,10 +92,7 @@ async function saveOrderToGoogleSheet(order) {
   console.log("🧾 ROW WRITTEN AT:", row.rowNumber);
 }
 
-
-/* =====================================================
-   SAVE CUSTOMER + CART BEFORE PAYMENT
-===================================================== */
+/* ================= SAVE CUSTOMER & CART ================= */
 
 router.post("/save-customer", (req, res) => {
   req.session.customer = {
@@ -92,18 +108,14 @@ router.post("/save-cart", (req, res) => {
   res.json({ saved: true });
 });
 
-/* =====================================================
-   VERIFY PAYMENT (FLUTTERWAVE CALLBACK)
-===================================================== */
+/* ================= VERIFY PAYMENT ================= */
 
 router.get("/verify", async (req, res) => {
-  const { transaction_id } = req.query;
+  const { transaction_id, tx_ref } = req.query;
 
   console.log("VERIFY QUERY PARAMS:", req.query);
 
-  if (!transaction_id) {
-    return res.redirect("/success.html");
-  }
+  if (!transaction_id) return res.redirect("/success.html");
 
   let payment;
 
@@ -129,7 +141,7 @@ router.get("/verify", async (req, res) => {
 
   const order = {
     transactionId: payment.id,
-    tx_ref: req.query.tx_ref,
+    tx_ref,
     amount: payment.amount,
     currency: payment.currency,
     customer: {
@@ -144,15 +156,15 @@ router.get("/verify", async (req, res) => {
 
   try {
     saveOrder(order);
-  } catch (err) {
-    console.error("LOCAL SAVE ERROR:", err.message);
+  } catch (e) {
+    console.error("LOCAL SAVE ERROR:", e.message);
   }
 
   try {
     await saveOrderToGoogleSheet(order);
     console.log("✅ Order saved to Google Sheets");
-  } catch (err) {
-    console.error("❌ Google Sheets error:", err.message);
+  } catch (e) {
+    console.error("❌ Google Sheets error:", e.message);
   }
 
   req.session.cart = {};
@@ -162,7 +174,3 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
