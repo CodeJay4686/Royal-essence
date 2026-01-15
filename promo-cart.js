@@ -55,3 +55,16 @@ function loadPromoCart() {
     })
     .catch(err => console.error(err));
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const checkoutBtn = document.getElementById("checkout");
+  const modal = document.getElementById("customer-modal");
+
+  if (!checkoutBtn || !modal) return;
+
+  checkoutBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    modal.classList.add("active");
+  });
+});
+
