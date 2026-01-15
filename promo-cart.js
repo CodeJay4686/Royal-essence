@@ -6,7 +6,7 @@ function addToCart(id) {
     })
     .then(() => {
       alert("Added to cart");
-      loadCart();
+      loadPromoCart();
     })
     .catch(err => {
       console.error(err);
@@ -17,10 +17,11 @@ function addToCart(id) {
 function removeFromCart(id) {
   fetch(`/cart/remove/${id}`, { method: "POST" })
     .then(res => res.json())
-    .then(() => loadCart());
+    .then(() => loadPromoCart());
 }
 
-function loadCart() {
+/* ===== THIS IS THE ONLY THING YOUR HTML WAS MISSING ===== */
+function loadPromoCart() {
   fetch("/cart")
     .then(res => res.json())
     .then(cart => {
@@ -41,8 +42,8 @@ function loadCart() {
             <div class="cart-info">
               <h3>${item.name}</h3>
               <p>₦${item.price.toLocaleString()}</p>
-              <p>Qty: ${item.quantity || 1}</p>
-              <button onclick="removeFromCart('${item.id}')">Remove</button>
+              <p>Qty: ${item.quantity}</p>
+              <button onclick="removeFromCart(${item.id})">Remove</button>
             </div>
           </div>
         `;
@@ -60,6 +61,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("customer-modal");
 
   if (!checkoutBtn || !modal) return;
+
+  checkoutBtn.addEventListener("click", () => {
+    modal.classList.add("active");
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const checkoutBtn = document.getElementById("checkout");
+  const modal = document.getElementById("customer-modal");
+
+  if (!checkoutBtn || !modal) {
+    console.error("Checkout button or modal missing");
+    return;
+  }
 
   checkoutBtn.addEventListener("click", (e) => {
     e.preventDefault();
