@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!form) return;
 
   form.addEventListener("submit", async (e) => {
-    e.preventDefault(); // ⛔ STOP normal form submit
+    e.preventDefault();
 
     // 1️⃣ Collect customer data
     const customer = {
@@ -13,8 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
       location: document.getElementById("cust-location").value,
     };
 
+    // ✅ DETERMINE WHICH CART TO USE
+    const cartEndpoint =
+      window.CART_TYPE === "promo" ? "/promo-cart" : "/cart";
+
     // 2️⃣ Get cart from backend
-    const cartRes = await fetch("/cart");
+    const cartRes = await fetch(cartEndpoint);
     const cart = await cartRes.json();
 
     if (!Object.keys(cart).length) {
