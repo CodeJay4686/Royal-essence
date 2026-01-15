@@ -34,12 +34,6 @@ function saveOrder(order) {
 /* =====================================================
    GOOGLE SHEETS SAVE (USING ENV VAR)
 ===================================================== */
-function formatItemsForSheet(items = {}) {
-  return Object.values(items)
-    .map(item => `${item.name} (₦${item.price}) x ${item.quantity || 1}`)
-    .join(", ");
-}
-
 async function saveOrderToGoogleSheet(order) {
   if (!process.env.GOOGLE_CREDS) {
     throw new Error("GOOGLE_CREDS env variable missing");
@@ -60,12 +54,12 @@ async function saveOrderToGoogleSheet(order) {
 
   await doc.loadInfo();
 
-  console.log("📄 SHEET TABS:", doc.sheetsByIndex.map(s => s.title));
-
   const sheet = doc.sheetsByIndex[0];
-  console.log("✍️ WRITING TO TAB:", sheet.title);
 
-  await sheet.addRow({
+  // 🔑 THIS IS THE FIX
+  await ensureHeaders(sheet);
+
+  const row = await sheet.addRow({
     "Order ID": order.transactionId,
     "Customer Name": order.customer.name,
     "WhatsApp": order.customer.whatsapp,
@@ -75,6 +69,8 @@ async function saveOrderToGoogleSheet(order) {
     "Items": formatItemsForSheet(order.items),
     "Date": new Date().toLocaleString(),
   });
+
+  console.log("🧾 ROW WRITTEN AT:", row.rowNumber);
 }
 
 
@@ -166,5 +162,6 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
