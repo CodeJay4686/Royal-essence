@@ -56,7 +56,7 @@ async function saveOrderToGoogleSheet(order) {
 
   const sheet = doc.sheetsByIndex[0];
 
-  // 🔑 THIS IS THE FIX
+  // ✅ THIS NOW EXISTS
   await ensureHeaders(sheet);
 
   const row = await sheet.addRow({
@@ -162,6 +162,7 @@ router.get("/verify", async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
