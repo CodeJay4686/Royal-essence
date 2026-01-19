@@ -77,7 +77,7 @@ module.exports = [
     id: 14,
     name: "Lattafa Her Confession",
     price: 46999,
-    image: "/images/eternal_aud.png"
+    image: "images/her_confesion.png"
   },
   {
     id: 12,
@@ -86,6 +86,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
