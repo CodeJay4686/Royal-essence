@@ -73,6 +73,12 @@ module.exports = [
     price: 53999,
     image: "/images/eternal_aud.png"
   },
+   {
+    id: 14,
+    name: "Lattafa Her Confession",
+    price: 46999,
+    image: "/images/eternal_aud.png"
+  },
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
@@ -80,6 +86,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
