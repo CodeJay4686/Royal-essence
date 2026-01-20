@@ -79,6 +79,13 @@ module.exports = [
     price: 46999,
     image: "images/her_confesion.png"
   },
+     {
+    id: 15,
+    name: "Lattafa Asad Bourbon 100Ml EDP",
+    price: 31999,
+    image: "images/asad_bourbon.png"
+  },
+  
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
@@ -86,6 +93,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
