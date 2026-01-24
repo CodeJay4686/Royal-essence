@@ -109,6 +109,12 @@ module.exports = [
     price: 6999,
     image: "images/GK_men.jpeg"
   },
+         {
+    id: 20,
+    name: "Sauvage Dior Christian Dior",
+    price: 11499,
+    image: "images/Sauvage.jpeg"
+  },
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
@@ -116,6 +122,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
