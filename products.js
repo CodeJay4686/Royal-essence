@@ -89,19 +89,25 @@ module.exports = [
     id: 16,
     name: "50ml Mosoufm Genie",
     price: 7499,
-    image: "images/mousuf.png"
+    image: "images/mousuf.jpeg"
   },
        {
     id: 17,
     name: "Oud for glory Niche fragrance",
     price: 14999,
-    image: "images/oud_for_glory.png"
+    image: "images/oud_for_glory.jpeg"
   },
        {
     id: 18,
     name: "Sugar EDP 100ml perfume for Her",
     price: 19499,
-    image: "images/asad_bourbon.png"
+    image: "images/asad_bourbon.jpeg"
+  },
+         {
+    id: 19,
+    name: "50ml GK men perfume",
+    price: 6999,
+    image: "images/GK_men.jpeg"
   },
   {
     id: 12,
@@ -110,6 +116,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
