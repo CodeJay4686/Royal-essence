@@ -85,7 +85,24 @@ module.exports = [
     price: 31999,
     image: "images/asad_bourbon.png"
   },
-  
+       {
+    id: 16,
+    name: "50ml Mosoufm Genie",
+    price: 7499,
+    image: "images/mousuf.png"
+  },
+       {
+    id: 17,
+    name: "Oud for glory Niche fragrance",
+    price: 14999,
+    image: "images/oud_for_glory.png"
+  },
+       {
+    id: 18,
+    name: "Sugar EDP 100ml perfume for Her",
+    price: 19499,
+    image: "images/asad_bourbon.png"
+  },
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
@@ -93,6 +110,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
