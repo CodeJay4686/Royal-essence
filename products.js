@@ -115,6 +115,13 @@ module.exports = [
     price: 11499,
     image: "images/Sauvage.jpeg"
   },
+           {
+    id: 21,
+    name: "5ml Refillable Perfume Atomizer",
+    price: 2999,
+    image: "images/perfume_atomizer.jpeg"
+  },
+     
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
@@ -122,6 +129,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
