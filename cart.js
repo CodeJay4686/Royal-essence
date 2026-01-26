@@ -52,7 +52,18 @@ function loadCart() {
     })
     .catch(err => console.error("Load cart error:", err));
 }
+  document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("qty-btn")) return;
 
+    const wrapper = e.target.closest(".quantity-wrapper");
+    const input = wrapper.querySelector(".qty-input");
+    let value = parseInt(input.value);
+
+    if (e.target.dataset.action === "plus") value++;
+    if (e.target.dataset.action === "minus" && value > 1) value--;
+
+    input.value = value;
+  });
 /* ================= OPEN PAYMENT MODAL ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -80,4 +91,5 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.add("active");
   });
 });
+
 
