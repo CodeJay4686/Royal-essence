@@ -1,10 +1,16 @@
-/* ================= ADD TO CART ================= */
+function addToCart(id, btn = null) {
+  let quantity = 1;
 
-function addToCart(id, btn) {
-  // Find the quantity from the product card
-  const card = btn.closest(".perfume-card");
-  const qtyInput = card.querySelector(".qty-input");
-  const quantity = parseInt(qtyInput.value) || 1;
+  // If this button comes from a product card with quantity selector
+  if (btn) {
+    const card = btn.closest(".perfume-card");
+    if (card) {
+      const qtyInput = card.querySelector(".qty-input");
+      if (qtyInput) {
+        quantity = parseInt(qtyInput.value) || 1;
+      }
+    }
+  }
 
   fetch(`/cart/add/${id}`, {
     method: "POST",
@@ -26,6 +32,7 @@ function addToCart(id, btn) {
       alert("Product not added");
     });
 }
+
 
 /* ================= REMOVE FROM CART ================= */
 
@@ -100,3 +107,4 @@ document.addEventListener("DOMContentLoaded", () => {
     modal.classList.add("active");
   });
 });
+
