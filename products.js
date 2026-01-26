@@ -121,6 +121,24 @@ module.exports = [
     price: 2999,
     image: "images/perfume_atomizer.jpeg"
   },
+             {
+    id: 22,
+    name: "50ml Ramz",
+    price: 12999,
+    image: "images/Ramz_50ml.jpeg"
+  },
+               {
+    id: 23,
+    name: "RAVE Now Intense",
+    price: 11999,
+    image: "images/Rave.jpeg"
+  },
+                 {
+    id: 24,
+    name: "Oud Al Layl Combo",
+    price: 19499,
+    image: "images/oud_al_layl.jpeg"
+  },
      
   {
     id: 12,
@@ -129,6 +147,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
