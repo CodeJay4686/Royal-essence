@@ -206,19 +206,22 @@
 
 <h2>Our Perfume Accessories</h2>
 
-<div class="collection-grid">
+<div class="perfume-card">
+  <img src="images/perfume_atomizer.jpeg" alt="Perfume Atomizer">
+  <h3>5ml Refillable Perfume Atomizer</h3>
+  <p class="price">₦2,999</p>
 
-  <div class="perfume-card">
-    <img src="images/perfume_atomizer.jpeg" alt="Image">
-    <h3>5ml Refillable Perfume Atomizer</h3>
-    <p class="price">₦2,999</p>
-    <!-- <p class="stock only-one">Only 1 left</p> -->
-    <button class="buy-btn" onclick="addToCart(21)">Add to Cart</button>
+  <!-- Quantity Selector -->
+  <div class="quantity-wrapper">
+    <button class="qty-btn" data-action="minus">−</button>
+    <input type="text" class="qty-input" value="1" readonly>
+    <button class="qty-btn" data-action="plus">+</button>
   </div>
 
-
-
-  
+  <!-- Existing cart.js hook -->
+  <button class="buy-btn" onclick="addToCart(21, this)">
+    Add to Cart
+  </button>
 </div>
 
  
