@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-/* ✅ correct path based on your real structure */
 const products = require('../products.js');
 
 function getCart(req) {
@@ -9,13 +8,18 @@ function getCart(req) {
   return req.session.cart;
 }
 
+/* ================= GET CART ================= */
+
 router.get('/', (req, res) => {
   res.json(getCart(req));
 });
 
+/* ================= ADD TO CART (WITH QUANTITY) ================= */
+
 router.post('/add/:id', (req, res) => {
   const cart = getCart(req);
   const id = Number(req.params.id);
+  const quantity = Number(req.body.quantity) || 1;
 
   const product = products.find(p => p.id === id);
   if (!product) {
@@ -23,19 +27,23 @@ router.post('/add/:id', (req, res) => {
   }
 
   if (!cart[id]) {
-    cart[id] = { ...product, quantity: 1 };
+    cart[id] = { ...product, quantity };
   } else {
-    cart[id].quantity += 1;
+    cart[id].quantity += quantity;
   }
 
   res.json(cart);
 });
+
+/* ================= REMOVE FROM CART ================= */
 
 router.post('/remove/:id', (req, res) => {
   const cart = getCart(req);
   delete cart[req.params.id];
   res.json(cart);
 });
+
+/* ================= CLEAR CART ================= */
 
 router.post('/clear', (req, res) => {
   req.session.cart = {};
