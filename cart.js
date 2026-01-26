@@ -1,5 +1,18 @@
-function addToCart(id) {
-  fetch(`/cart/add/${id}`, { method: "POST" })
+/* ================= ADD TO CART ================= */
+
+function addToCart(id, btn) {
+  // Find the quantity from the product card
+  const card = btn.closest(".perfume-card");
+  const qtyInput = card.querySelector(".qty-input");
+  const quantity = parseInt(qtyInput.value) || 1;
+
+  fetch(`/cart/add/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ quantity })
+  })
     .then(res => {
       if (!res.ok) throw new Error("Failed to add");
       return res.json();
@@ -14,11 +27,16 @@ function addToCart(id) {
     });
 }
 
+/* ================= REMOVE FROM CART ================= */
+
 function removeFromCart(id) {
   fetch(`/cart/remove/${id}`, { method: "POST" })
     .then(res => res.json())
-    .then(() => loadCart());
+    .then(() => loadCart())
+    .catch(err => console.error(err));
 }
+
+/* ================= LOAD CART ================= */
 
 function loadCart() {
   fetch("/cart")
@@ -33,7 +51,8 @@ function loadCart() {
       let total = 0;
 
       Object.values(cart).forEach(item => {
-        total += item.price * (item.quantity || 1);
+        const qty = item.quantity || 1;
+        total += item.price * qty;
 
         cartContainer.innerHTML += `
           <div class="cart-item">
@@ -41,7 +60,7 @@ function loadCart() {
             <div class="cart-info">
               <h3>${item.name}</h3>
               <p>₦${item.price.toLocaleString()}</p>
-              <p>Qty: ${item.quantity}</p>
+              <p>Qty: ${qty}</p>
               <button onclick="removeFromCart(${item.id})">Remove</button>
             </div>
           </div>
@@ -52,19 +71,23 @@ function loadCart() {
     })
     .catch(err => console.error("Load cart error:", err));
 }
-  document.addEventListener("click", function (e) {
-    if (!e.target.classList.contains("qty-btn")) return;
 
-    const wrapper = e.target.closest(".quantity-wrapper");
-    const input = wrapper.querySelector(".qty-input");
-    let value = parseInt(input.value);
+/* ================= QUANTITY + / - HANDLER ================= */
 
-    if (e.target.dataset.action === "plus") value++;
-    if (e.target.dataset.action === "minus" && value > 1) value--;
+document.addEventListener("click", function (e) {
+  if (!e.target.classList.contains("qty-btn")) return;
 
-    input.value = value;
-  });
-/* ================= OPEN PAYMENT MODAL ================= */
+  const wrapper = e.target.closest(".quantity-wrapper");
+  const input = wrapper.querySelector(".qty-input");
+  let value = parseInt(input.value) || 1;
+
+  if (e.target.dataset.action === "plus") value++;
+  if (e.target.dataset.action === "minus" && value > 1) value--;
+
+  input.value = value;
+});
+
+/* ================= CHECKOUT MODAL ================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   const checkoutBtn = document.getElementById("checkout");
@@ -72,24 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!checkoutBtn || !modal) return;
 
-  checkoutBtn.addEventListener("click", () => {
-    modal.classList.add("active");
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const checkoutBtn = document.getElementById("checkout");
-  const modal = document.getElementById("customer-modal");
-
-  if (!checkoutBtn || !modal) {
-    console.error("Checkout button or modal missing");
-    return;
-  }
-
-  checkoutBtn.addEventListener("click", (e) => {
+  checkoutBtn.addEventListener("click", e => {
     e.preventDefault();
     modal.classList.add("active");
   });
 });
-
-
