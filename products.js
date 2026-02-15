@@ -144,8 +144,8 @@ module.exports = [
     id: 25,
     name: "Sleek and trendy Valenzo watch",
     price: 19999,
-    image: "/images/vintage _radio.png"
-  }
+    image: "/images/Valenzo_watch.jpeg"
+  },
 
   {
     id: 12,
@@ -154,6 +154,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
