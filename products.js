@@ -139,7 +139,14 @@ module.exports = [
     price: 19499,
     image: "images/oud_al_layl.jpeg"
   },
-     
+
+  {
+    id: 25,
+    name: "Sleek and trendy Valenzo watch",
+    price: 19999,
+    image: "/images/vintage _radio.png"
+  }
+
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
@@ -147,6 +154,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
