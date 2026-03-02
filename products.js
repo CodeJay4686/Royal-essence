@@ -147,6 +147,14 @@ module.exports = [
     image: "/images/Valenzo_watch.jpeg"
   },
 
+    {
+    id: 26,
+    name: "50ml eclaire",
+    price: 8999,
+    image: "/images/eclaire.jpeg"
+  },
+
+
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
@@ -154,6 +162,7 @@ module.exports = [
     image: "/images/vintage _radio.png"
   }
 ];
+
 
 
 
