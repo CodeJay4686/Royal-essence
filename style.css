@@ -36,7 +36,7 @@ body {
 
   padding: 20px 40px;
   z-index: 1000;         /* 👈 keeps it above everything */
-  background: linear-gradient(180deg, #b7a873 0%, #9f9a70 100%);
+  background: linear-gradient(180deg, #f9d5e5 0%, #fff0f5 100%);
 }
 
 .logo {
