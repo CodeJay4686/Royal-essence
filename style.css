@@ -121,8 +121,8 @@ nav a:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #87824a;
-  color: #fff;
+  background: #f8c8dc;
+  color: #000000;
   font-weight: 600;
   padding: 0.6rem 1.2rem;
   border-radius: 50px;
@@ -137,7 +137,7 @@ nav a:hover {
 
 /* Hover effect */
 .cart:hover {
-  background: #ff6333;
+   background: #ff69b4;
   transform: translateY(-2px);
 }
 
