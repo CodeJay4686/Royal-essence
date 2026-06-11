@@ -45,7 +45,7 @@ body {
   font-size: 30px;
   letter-spacing: 1px;
   line-height: 1.1;
-  color: #fff;
+  color: #000000;
 }
 
 .logo span {
@@ -56,7 +56,7 @@ body {
 
 nav a {
   margin: 0 18px;
-  color: #ffffff;
+  ccolor: #000000;
   text-decoration: none;
   font-size: 13px;
   font-weight: 400;
@@ -154,13 +154,13 @@ nav a:hover {
   font-family: 'Playfair Display', serif;
   font-size: 52px;
   font-weight: 600;
-  color: #fff;
+ color: #000000;
   letter-spacing: 0.5px;
 }
 
 .hero-text p {
   margin-top: 22px;
-  color: rgba(255,255,255,0.9);
+  color: rgba(0, 0, 0, 0.9);
   font-size: 14px;
   line-height: 1.7;
   max-width: 260px;
