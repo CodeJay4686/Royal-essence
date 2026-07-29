@@ -17,28 +17,27 @@ body {
 /* PAGE WRAPPER */
 .page {
 
-  margin: none;
   background: linear-gradient(180deg, #f9d5e5 0%, #fff0f5 100%);
-  padding: 36px 40px 50px;
+    width:100%;
+    max-width:1600px;
+    margin:0 auto;
+    padding:100px 24px 60px;
 
 }
 
 /* NAVBAR */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.navbar{
+    height:78px;
+    padding:0 28px;
 
-  position: fixed;       /* 👈 keeps it on screen */
-  top: 0;
-  left: 0;
-  width: 100%;
+    backdrop-filter:blur(18px);
+    background:rgba(255,240,245,.95);
 
-  padding: 20px 40px;
-  z-index: 1000;         /* 👈 keeps it above everything */
-  background: linear-gradient(180deg, #f9d5e5 0%, #fff0f5 100%);
+    border-bottom:1px solid rgba(0,0,0,.05);
+
+    box-shadow:
+    0 8px 25px rgba(0,0,0,.05);
 }
-
 .logo {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
