@@ -163,7 +163,7 @@ module.exports = [
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
-    price: 62999,
+    price: 49999,
     image: "/images/vintage _radio.png"
   }
 ];
