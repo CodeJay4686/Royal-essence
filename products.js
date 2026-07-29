@@ -156,8 +156,8 @@ module.exports = [
 
     {
     id: 27,
-    name: "50ml eclaire",
-    price: 8999,
+    name: "Lattafa Khamrah Waha EDP 100ml",
+    price: 49999,
     image: "/images/waha.png"
   },
   {
