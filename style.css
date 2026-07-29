@@ -48,16 +48,17 @@ body {
 .logo {
   font-family: 'Playfair Display', serif;
   font-weight: 700;
-  font-size: 30px;
-  letter-spacing: 1px;
-  line-height: 1.1;
   color: #000000;
+  font-size:36px;
+line-height:1;
+letter-spacing:.5px;
 }
 
 .logo span {
-  font-size: 20px;
-  letter-spacing: 3px;
-  opacity: 0.9;
+font-size:17px;
+letter-spacing:6px;
+display:block;
+margin-top:8px;
 }
 
 nav a {
@@ -124,13 +125,16 @@ nav a:hover {
 
 /* Cart Button */
 .cart {
+  height:48px;
+padding:0 22px;
+border:1px solid rgba(255,255,255,.8);
+box-shadow:0 6px 18px rgba(0,0,0,.08);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   background: #f8c8dc;
   color: #000000;
   font-weight: 600;
-  padding: 0.6rem 1.2rem;
   border-radius: 50px;
   cursor: pointer;
   transition: background 0.3s, transform 0.2s;
@@ -142,34 +146,39 @@ nav a:hover {
 }
 
 /* Hover effect */
-.cart:hover {
-   background: #ff69b4;
-  transform: translateY(-2px);
+.cart:hover{
+transform:translateY(-3px);
+box-shadow:0 15px 30px rgba(0,0,0,.12);
+
 }
 
 /* HERO */
 .hero {
+  display:grid;
+grid-template-columns:1fr auto 1fr;
+gap:70px;
+align-items:center;
+padding:70px 0 100px;
   position: relative;
-  display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 90px 30px 80px;
 }
 
 .hero-text h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 52px;
+  font-size:clamp(2.8rem,5vw,4.8rem);
+line-height:1;
+letter-spacing:-1px;
   font-weight: 600;
  color: #000000;
-  letter-spacing: 0.5px;
 }
 
 .hero-text p {
+  font-size:16px;
+line-height:1.8;
+max-width:320px;
+opacity:.85;
   margin-top: 22px;
   color: rgba(0, 0, 0, 0.9);
-  font-size: 14px;
-  line-height: 1.7;
-  max-width: 260px;
 }
 
 .hero-center {
@@ -177,9 +186,15 @@ nav a:hover {
 }
 
 .perfume {
-  width: 300px;
+  width:min(380px,80vw);
+transition:.4s;
   z-index: 2;
   filter: drop-shadow(0 30px 40px rgba(0,0,0,0.25));
+}
+
+.perfume:hover{
+transform:scale(1.03);
+
 }
 
 /* BUTTERFLIES */
@@ -190,14 +205,19 @@ nav a:hover {
 }
 
 .left-butterfly {
+  left:-8%;
+bottom:15%;
+
+}
+
+.right-butterfly{
+
+right:-8%;
+top:10%;
   left: 170px;
   bottom: 30px;
 }
 
-.right-butterfly {
-  right: 190px;
-  top: 50px;
-}
 
 .bottom {
   display: flex;
@@ -211,10 +231,12 @@ nav a:hover {
 
 /* Bottom Section with Dark Background */
 .bottom {
+  padding:90px 28px;
+border-radius:40px;
+margin-top:50px;
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
-  padding: 4rem 2rem;
   background: #1c1c1c; /* charcoal / deep black */
   justify-content: center;
   font-family: 'Arial', sans-serif;
@@ -246,45 +268,51 @@ nav a:hover {
 }
 
 .product {
+  max-width:320px;
+border-radius:24px;
+overflow:hidden;
+box-shadow:0 25px 60px rgba(0,0,0,.35);
   background: #2a2a2a; /* slightly lighter than background */
-  border-radius: 15px;
-  overflow: hidden;
   text-align: center;
   transition: transform 0.3s, box-shadow 0.3s;
   flex: 1 1 200px;
-  max-width: 220px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
 }
 
 .product img {
   width: 100%;
-  height: 220px;
-  object-fit: cover;
+ height:300px;
+object-fit:cover;
   border-bottom: 1px solid #444;
   transition: transform 0.3s;
 }
 
 .product:hover img {
-  transform: scale(1.05);
+transform:translateY(-8px);
 }
 
 .product p {
-  font-weight: 600;
+  
+font-size:20px;
+font-weight:700;
+padding:24px 20px 8px;
   margin: 1rem 0 0.5rem;
   color: #f5f5f5; /* light cream text */
 }
 
 .product span {
   display: block;
-  color: #d4af37; /* gold accent price */
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+font-size:24px;
+font-weight:700;
+letter-spacing:.5px;
+color:#D4AF37;
+padding-bottom:25px;
 }
 
 /* Promo Card */
 .promo {
   flex: 1 1 250px;
-  background: #3a2b1f; /* deep brown accent */
+ background:linear-gradient(145deg,#4d3423,#2b1c12
   color: #fff;
   border-radius: 15px;
   padding: 2rem;
@@ -314,9 +342,11 @@ nav a:hover {
   text-decoration: none;
   background: #d4af37; /* gold button */
   color: #1c1c1c; /* dark text on gold */
-  padding: 0.6rem 1.2rem;
+  padding: 15px 34px;
+font-size:15px;
+letter-spacing:.5px;
+font-weight:700;
   border-radius: 50px;
-  font-weight: bold;
   transition: background 0.3s, color 0.3s;
 }
 
@@ -325,144 +355,128 @@ nav a:hover {
   color: #3a2b1f; /* deep brown text */
 }
 
-/* ===== FOOTER ===== */
+/* ===========================
+   FOOTER
+=========================== */
+
 .footer {
   background: #0f0f0f;
   color: #ccc;
-  padding: 60px 30px 20px;
+  padding: 80px 24px 30px;
   margin-top: 80px;
   border-top: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 .footer-container {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 40px;
 }
 
-/* Brand */
 .footer-brand h2 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   color: #d4af37;
-  font-size: 28px;
+  font-size: 30px;
   margin-bottom: 12px;
 }
 
 .footer-brand p {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: 15px;
+  line-height: 1.8;
   color: #aaa;
 }
 
-/* Links & Contact */
 .footer-links h4,
 .footer-contact h4,
 .footer-social h4 {
   color: #fff;
   font-size: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
   letter-spacing: 1px;
 }
 
 .footer-links a {
   display: block;
   color: #aaa;
+  text-decoration: none;
   font-size: 14px;
-  margin-bottom: 10px;
-  transition: color 0.3s;
+  margin-bottom: 12px;
+  transition: color 0.3s ease;
 }
 
 .footer-links a:hover {
   color: #d4af37;
 }
 
-/* Contact */
 .footer-contact p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   color: #aaa;
 }
 
 .footer-contact i {
   color: #d4af37;
-  margin-right: 8px;
 }
 
-/* Social Icons */
 .social-icons {
   display: flex;
-  gap: 15px;
+  gap: 14px;
 }
 
 .social-icons a {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  border: 1px solid rgba(212,175,55,0.5);
+  border: 1px solid rgba(212, 175, 55, 0.5);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   color: #d4af37;
+  text-decoration: none;
   transition: all 0.3s ease;
 }
 
 .social-icons a:hover {
   background: #d4af37;
   color: #000;
+  transform: translateY(-3px);
 }
 
-/* Bottom */
 .footer-bottom {
+  margin-top: 45px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
-  margin-top: 40px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(255,255,255,0.1);
   font-size: 13px;
   color: #777;
 }
 
-/* Mobile */
-@media (max-width: 600px) {
-  .footer {
-    text-align: center;
-  }
+/* ===========================
+   RESPONSIVE
+=========================== */
 
-  .social-icons {
-    justify-content: center;
-  }
-}
+/* Large Tablets */
 
-/* Responsive */
-@media (max-width: 900px) {
-  .products {
-    justify-content: center;
-  }
+@media (max-width: 992px) {
 
-  .promo {
-    width: 100%;
-  }
-}
-
-/* --- MEDIA QUERIES FOR RESPONSIVENESS --- */
-
-/* Tablet / small laptops */
-@media (max-width: 1200px) {
   .hero {
     flex-direction: column;
     text-align: center;
-    padding: 60px 20px 50px;
+    gap: 35px;
+    padding: 60px 20px;
   }
 
-  .hero-text.left,
-  .hero-text.right {
-    margin: 20px 0 0;
+  .hero-text {
     max-width: 100%;
   }
 
-  .hero-center {
-    margin: 30px 0;
+  .hero-text p {
+    margin: 15px auto 0;
   }
 
   .perfume {
@@ -470,124 +484,209 @@ nav a:hover {
   }
 
   .left-butterfly {
-    left: 50px;
-    bottom: 20px;
+    left: 15%;
+    bottom: 8%;
   }
 
   .right-butterfly {
-    right: 50px;
-    top: 20px;
-  }
-}
-
-/* Tablets / large phones */
-@media (max-width: 768px) {
-
-
-  nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .hero-text h1 {
-    font-size: 40px;
-  }
-
-  .hero-text p {
-    font-size: 13px;
-    max-width: 100%;
-    margin: 15px auto 0;
-  }
-
-  .perfume {
-    width: 200px;
-  }
-
-  .left-butterfly, .right-butterfly {
-    width: 60px;
+    right: 15%;
+    top: 8%;
   }
 
   .bottom {
-    padding: 3rem 1rem;
-    flex-direction: column;
-    align-items: center;
+    padding: 60px 20px;
   }
 
   .products {
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-  }
-
-  .product {
-    max-width: 90%;
-    flex: 1 1 auto;
+    gap: 24px;
   }
 
   .promo {
-    flex: 1 1 100%;
-    padding: 1.5rem;
+    width: 100%;
+    max-width: 500px;
   }
 }
 
-/* Mobile phones */
-@media (max-width: 480px) {
+/* Tablets */
+
+@media (max-width: 768px) {
+
+  .page {
+    padding: 95px 16px 40px;
+  }
+
+  .navbar {
+    padding: 16px;
+  }
+
+  .logo {
+    font-size: 26px;
+  }
+
+  .logo span {
+    font-size: 14px;
+    letter-spacing: 4px;
+  }
+
+  .cart {
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .hero {
+    padding: 50px 0;
+  }
+
   .hero-text h1 {
-    font-size: 28px;
+    font-size: 2.4rem;
   }
 
   .hero-text p {
-    font-size: 12px;
-    line-height: 1.5;
+    font-size: 14px;
+    line-height: 1.7;
   }
 
   .perfume {
-    width: 180px;
+    width: 220px;
   }
 
-  .left-butterfly, .right-butterfly {
-    width: 50px;
+  .butterfly {
+    width: 55px;
+  }
+
+  .bottom {
+    padding: 50px 18px;
   }
 
   .best-selling h3 {
     font-size: 2rem;
-    line-height: 1.2;
   }
 
-  .promo h2 {
-    font-size: 1.6rem;
+  .products {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .promo p {
-    font-size: 0.95rem;
+  .product {
+    width: 100%;
+    max-width: 360px;
   }
 
-  nav a {
-    font-size: 12px;
+  .product img {
+    height: 300px;
   }
 
-  .cart {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
+  .promo {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .footer {
+    text-align: center;
+  }
+
+  .footer-contact p {
+    justify-content: center;
+  }
+
+  .social-icons {
+    justify-content: center;
   }
 }
 
-/* Optional: Very small screens (less than 360px) */
-@media (max-width: 360px) {
+/* Mobile Phones */
+
+@media (max-width: 480px) {
+
+  .page {
+    padding: 90px 14px 35px;
+  }
+
+  .hero {
+    gap: 28px;
+  }
+
   .hero-text h1 {
-    font-size: 24px;
+    font-size: 2rem;
   }
 
   .hero-text p {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .perfume {
-    width: 160px;
+    width: 190px;
+  }
+
+  .butterfly {
+    width: 42px;
+  }
+
+  .best-selling h3 {
+    font-size: 1.7rem;
+  }
+
+  .product {
+    border-radius: 18px;
+  }
+
+  .product img {
+    height: 260px;
+  }
+
+  .promo {
+    padding: 24px;
   }
 
   .promo h2 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+  }
+
+  .promo p {
+    font-size: 14px;
+  }
+
+  .footer {
+    padding: 60px 18px 25px;
+  }
+
+  .footer-brand h2 {
+    font-size: 26px;
+  }
+
+  .footer-brand p,
+  .footer-links a,
+  .footer-contact p {
+    font-size: 13px;
+  }
+}
+
+/* Extra Small Devices */
+
+@media (max-width: 360px) {
+
+  .hero-text h1 {
+    font-size: 1.8rem;
+  }
+
+  .perfume {
+    width: 165px;
+  }
+
+  .best-selling h3 {
+    font-size: 1.5rem;
+  }
+
+  .product img {
+    height: 230px;
+  }
+
+  .promo h2 {
+    font-size: 1.3rem;
+  }
+
+  .cart {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.85rem;
   }
 }
