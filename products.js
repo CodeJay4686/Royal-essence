@@ -154,7 +154,12 @@ module.exports = [
     image: "/images/eclaire.jpeg"
   },
 
-
+    {
+    id: 27,
+    name: "50ml eclaire",
+    price: 8999,
+    image: "/images/waha.png"
+  },
   {
     id: 12,
     name: "Lattafa Pride Vintage Radio EDP 100ml",
